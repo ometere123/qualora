@@ -75,7 +75,7 @@ export default function CommandRibbon({ user, onOpenDocket: _onOpenDocket }: Pro
     <header className="command-ribbon px-5 flex items-center gap-4">
       {/* Logo */}
       <Link href="/app/graph" style={{ flexShrink: 0, lineHeight: 0 }}>
-        <QualoraMark variant="dark" size={28} withWordmark={false} />
+        <QualoraMark variant="dark" size={28} withWordmark={true} />
       </Link>
 
       <div

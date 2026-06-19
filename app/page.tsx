@@ -7,7 +7,7 @@ export default function LandingPage() {
 
       {/* ── Nav ── */}
       <nav className="flex items-center justify-between px-8 py-5">
-        <QualoraMark variant="light" size={36} withWordmark={false} />
+        <QualoraMark variant="light" size={36} withWordmark={true} />
         <div className="flex items-center gap-3">
           <Link
             href="/auth/login"
