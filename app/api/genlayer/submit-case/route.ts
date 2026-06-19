@@ -58,15 +58,15 @@ export async function POST(request: Request) {
   let userId: string | undefined
 
   try {
-    const body = await request.json()
-    caseId = body.caseId
-    const publicEvidenceUrls = Array.isArray(body.publicEvidenceUrls) ? body.publicEvidenceUrls : []
-    if (!caseId) return NextResponse.json({ error: "caseId is required" }, { status: 400 })
-
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     userId = user.id
+
+    const body = await request.json()
+    caseId = body.caseId
+    const publicEvidenceUrls = Array.isArray(body.publicEvidenceUrls) ? body.publicEvidenceUrls : []
+    if (!caseId) return NextResponse.json({ error: "caseId is required" }, { status: 400 })
 
     const masterSecret = process.env.WALLET_MASTER_SECRET
     if (!masterSecret) return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 })

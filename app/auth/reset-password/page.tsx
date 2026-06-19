@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import QualoraMark from "@/components/brand/QualoraMark"
 
 export default function ResetPasswordPage() {
   const router = useRouter()
@@ -45,10 +46,8 @@ export default function ResetPasswordPage() {
       className="min-h-screen flex flex-col items-center justify-center px-4"
       style={{ background: "#0A1020" }}
     >
-      <Link href="/" className="mb-10">
-        <span style={{ fontFamily: "var(--font-archivo)", fontSize: 22, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em" }}>
-          Qualora
-        </span>
+      <Link href="/" className="mb-10" style={{ lineHeight: 0 }}>
+        <QualoraMark variant="light" size={44} withWordmark={true} />
       </Link>
 
       <div

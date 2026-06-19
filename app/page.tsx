@@ -1,4 +1,5 @@
 import Link from "next/link"
+import QualoraMark from "@/components/brand/QualoraMark"
 
 export default function LandingPage() {
   return (
@@ -6,17 +7,7 @@ export default function LandingPage() {
 
       {/* ── Nav ── */}
       <nav className="flex items-center justify-between px-8 py-5">
-        <span
-          style={{
-            fontFamily: "var(--font-archivo)",
-            fontSize: 20,
-            fontWeight: 700,
-            color: "#FFFFFF",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Qualora
-        </span>
+        <QualoraMark variant="light" size={36} withWordmark={false} />
         <div className="flex items-center gap-3">
           <Link
             href="/auth/login"

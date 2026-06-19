@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client"
 import {
   Database, AlertTriangle, Clock, Plus, Search, LogOut, User as UserIcon
 } from "lucide-react"
+import QualoraMark from "@/components/brand/QualoraMark"
 
 interface Props {
   user: User
@@ -73,18 +74,8 @@ export default function CommandRibbon({ user, onOpenDocket: _onOpenDocket }: Pro
   return (
     <header className="command-ribbon px-5 flex items-center gap-4">
       {/* Logo */}
-      <Link
-        href="/app/graph"
-        style={{
-          fontFamily: "var(--font-archivo)",
-          fontSize: 17,
-          fontWeight: 700,
-          color: "var(--governance-navy)",
-          letterSpacing: "-0.02em",
-          flexShrink: 0,
-        }}
-      >
-        Qualora
+      <Link href="/app/graph" style={{ flexShrink: 0, lineHeight: 0 }}>
+        <QualoraMark variant="dark" size={28} withWordmark={false} />
       </Link>
 
       <div
