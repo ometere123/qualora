@@ -212,7 +212,16 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
             <div className="flex gap-3">
               <div>
                 <p className="text-meta mb-1">Transaction</p>
-                <span className="hash-block">{verdict.transaction_hash}</span>
+                <a
+                  href={`https://explorer-studio.genlayer.com/tx/${verdict.transaction_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hash-block"
+                  style={{ color: "var(--validation-cyan)", textDecoration: "none" }}
+                  title={verdict.transaction_hash}
+                >
+                  {verdict.transaction_hash}
+                </a>
               </div>
               <div>
                 <p className="text-meta mb-1">Contract</p>

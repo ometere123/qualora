@@ -78,9 +78,19 @@ export default async function ContractTracePage() {
                     </Link>
                   </td>
                   <td style={{ padding: "12px 16px" }}>
-                    <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>
-                      {log.transaction_hash ? log.transaction_hash.slice(0, 18) + "…" : "—"}
-                    </span>
+                    {log.transaction_hash ? (
+                      <a
+                        href={`https://explorer-studio.genlayer.com/tx/${log.transaction_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--validation-cyan)", textDecoration: "none" }}
+                        title={log.transaction_hash}
+                      >
+                        {log.transaction_hash.slice(0, 18)}…
+                      </a>
+                    ) : (
+                      <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <span style={{

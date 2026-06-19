@@ -191,7 +191,16 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
                 {verdict.transaction_hash && (
                   <div>
                     <p className="text-meta mb-1">Transaction</p>
-                    <span className="hash-block" style={{ fontSize: 10 }}>{verdict.transaction_hash}</span>
+                    <a
+                      href={`https://explorer-studio.genlayer.com/tx/${verdict.transaction_hash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hash-block"
+                      style={{ fontSize: 10, color: "var(--validation-cyan)", textDecoration: "none", display: "block" }}
+                      title={verdict.transaction_hash}
+                    >
+                      {verdict.transaction_hash}
+                    </a>
                   </div>
                 )}
                 {verdict.consensus_timestamp && (

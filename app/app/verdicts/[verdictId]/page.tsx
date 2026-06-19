@@ -64,7 +64,16 @@ export default async function VerdictDetailPage({ params }: { params: Promise<{ 
           </div>
           <div>
             <p className="text-meta mb-1">Transaction hash</p>
-            <span className="hash-block">{v.transaction_hash}</span>
+            <a
+              href={`https://explorer-studio.genlayer.com/tx/${v.transaction_hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hash-block"
+              style={{ color: "var(--validation-cyan)", textDecoration: "none", display: "block" }}
+              title={v.transaction_hash}
+            >
+              {v.transaction_hash}
+            </a>
           </div>
           <div>
             <p className="text-meta mb-1">Evidence digest</p>
