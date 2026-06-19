@@ -12,7 +12,8 @@ export default async function VerdictsPage() {
     .from("profiles").select("role").eq("user_id", user!.id).single()
   const isAdmin = profile?.role === "admin"
 
-  const SELECT = `*, governance_cases(title, issue_type, datasets(name))`
+  // governance_cases has no "title" column — use issue_type instead
+  const SELECT = `*, governance_cases(id, issue_type, dataset_id, datasets(name))`
   const { data: verdicts } = isAdmin
     ? await createAdminClient()
         .from("genlayer_governance_verdicts")
@@ -58,7 +59,7 @@ export default async function VerdictsPage() {
                 <tr key={v.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <td style={{ padding: "12px 16px" }}>
                     <Link href={`/app/consensus/${v.governance_case_id}`} style={{ fontSize: 13, color: "var(--validation-cyan)", textDecoration: "none" }}>
-                      {v.governance_cases?.title ?? v.governance_case_id?.slice(0, 8).toUpperCase()}
+                      {v.governance_cases?.issue_type?.replace(/_/g, " ") ?? v.governance_case_id?.slice(0, 8).toUpperCase()}
                     </Link>
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>

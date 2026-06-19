@@ -12,14 +12,15 @@ export default async function ContractTracePage() {
     .from("profiles").select("role").eq("user_id", user!.id).single()
   const isAdmin = profile?.role === "admin"
 
+  // governance_cases has no "title" column — use issue_type
   const { data: logs } = isAdmin
     ? await createAdminClient()
         .from("contract_activity_logs")
-        .select(`*, governance_cases(title)`)
+        .select(`*, governance_cases(id, issue_type)`)
         .order("created_at", { ascending: false })
     : await supabase
         .from("contract_activity_logs")
-        .select(`*, governance_cases(title)`)
+        .select(`*, governance_cases(id, issue_type)`)
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false })
 
@@ -73,7 +74,7 @@ export default async function ContractTracePage() {
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <Link href={`/app/cases/${log.governance_case_id}`} style={{ fontSize: 13, color: "var(--validation-cyan)", textDecoration: "none" }}>
-                      {(log as any).governance_cases?.title ?? log.governance_case_id?.slice(0, 8).toUpperCase()}
+                      {(log as any).governance_cases?.issue_type?.replace(/_/g, " ") ?? log.governance_case_id?.slice(0, 8).toUpperCase()}
                     </Link>
                   </td>
                   <td style={{ padding: "12px 16px" }}>
