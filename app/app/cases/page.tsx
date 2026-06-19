@@ -66,13 +66,17 @@ export default async function CasesPage() {
                     </span>
                   </td>
                   <td style={{ padding: "14px 20px" }}>
-                    {c.genlayer_governance_verdicts?.verdict ? (
-                      <span className={`verdict-badge ${verdictClass(c.genlayer_governance_verdicts.verdict)}`}>
-                        {c.genlayer_governance_verdicts.verdict.replace(/_/g, " ")}
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: 12, color: "var(--dormant-slate)" }}>—</span>
-                    )}
+                    {(() => {
+                      const raw = c.genlayer_governance_verdicts
+                      const v = Array.isArray(raw) ? raw[0]?.verdict : raw?.verdict
+                      return v ? (
+                        <span className={`verdict-badge ${verdictClass(v)}`}>
+                          {v.replace(/_/g, " ")}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: 12, color: "var(--dormant-slate)" }}>—</span>
+                      )
+                    })()}
                   </td>
                   <td style={{ padding: "14px 20px", textAlign: "right" }}>
                     <Link href={`/app/cases/${c.id}`} style={{ fontSize: 12, color: "var(--validation-cyan)" }}>View</Link>

@@ -261,6 +261,23 @@ export async function POST(request: Request) {
       submitted_to_genlayer_at: new Date().toISOString(),
     }).eq("id", caseId)
 
+    // Apply governance verdict to the dataset
+    const finalVerdict = String(card.verdict ?? consensus.verdict ?? "")
+    const datasetId = (caseRow as Record<string, string | null>).dataset_id
+    if (datasetId) {
+      const newGovernanceStatus =
+        finalVerdict === "quarantine_dataset"         ? "quarantined"
+        : finalVerdict === "approved"                 ? "approved"
+        : finalVerdict === "approved_with_warning"    ? "approved"
+        : null  // other verdicts leave dataset status unchanged
+
+      if (newGovernanceStatus) {
+        await admin.from("datasets")
+          .update({ governance_status: newGovernanceStatus })
+          .eq("id", datasetId)
+      }
+    }
+
     return NextResponse.json({ ok: true, txHash, receipt, status: caseStatus, verdict: card })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err)
