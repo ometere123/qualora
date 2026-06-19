@@ -8,11 +8,12 @@ import CaseDocketDrawer from "./CaseDocketDrawer"
 
 interface Props {
   user: User
-  profile: { onboarding_completed: boolean; display_name: string | null } | null
+  profile: { onboarding_completed: boolean; display_name: string | null; role?: string | null } | null
+  isAdmin?: boolean
   children: React.ReactNode
 }
 
-export default function AppShell({ user, profile, children }: Props) {
+export default function AppShell({ user, profile, isAdmin = false, children }: Props) {
   const [docketCaseId, setDocketCaseId] = useState<string | null>(null)
 
   return (
@@ -32,7 +33,7 @@ export default function AppShell({ user, profile, children }: Props) {
           }}
           className="hidden md:flex flex-col"
         >
-          <MiniNav />
+          <MiniNav isAdmin={isAdmin} />
         </aside>
 
         {/* Main content */}

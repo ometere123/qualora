@@ -1,0 +1,13 @@
+customer_id,customer_email,signup_date,mrr,account_status,region,last_seen_at
+C-1001,ada@example.com,2026-06-01,120,active,NA,2026-06-18
+C-1002,,2026-06-02,80,active,EMEA,2026-06-17
+C-1003,lin@example.com,2026-06-04,220,active,NA,2026-06-18
+C-1004,mira@example.com,2026-06-05,0,trial,APAC,2026-06-15
+C-1005,,2026-06-07,450,active,EMEA,2026-06-18
+C-1002,,2026-06-02,80,active,EMEA,2026-06-17
+C-1006,noah@example.com,2026-06-08,310,past_due,NA,2026-06-10
+C-1007,sara@example.com,2026-06-09,95,active,LATAM,2026-06-18
+C-1008,,2026-06-10,180,active,APAC,2026-06-16
+C-1009,ivan@example.com,2026-06-12,260,active,EMEA,2026-06-18
+C-1010,zoe@example.com,2026-06-13,140,active,NA,2026-06-18
+C-1011,,2026-06-14,75,trial,NA,2026-06-14

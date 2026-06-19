@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import Link from "next/link"
 
 export const metadata = { title: "Verdicts" }
@@ -7,11 +8,21 @@ export default async function VerdictsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: verdicts } = await supabase
-    .from("genlayer_governance_verdicts")
-    .select(`*, governance_cases(title, issue_type, datasets(name))`)
-    .eq("user_id", user!.id)
-    .order("created_at", { ascending: false })
+  const { data: profile } = await supabase
+    .from("profiles").select("role").eq("user_id", user!.id).single()
+  const isAdmin = profile?.role === "admin"
+
+  const SELECT = `*, governance_cases(title, issue_type, datasets(name))`
+  const { data: verdicts } = isAdmin
+    ? await createAdminClient()
+        .from("genlayer_governance_verdicts")
+        .select(SELECT)
+        .order("created_at", { ascending: false })
+    : await supabase
+        .from("genlayer_governance_verdicts")
+        .select(SELECT)
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
 
   return (
     <div style={{ padding: "28px 32px" }}>

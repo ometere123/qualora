@@ -7,7 +7,7 @@ import {
   Vault, GitMerge, Wrench, List, Activity, Settings, UserCircle, Eye
 } from "lucide-react"
 
-const NAV = [
+const BASE_NAV = [
   { label: "Governance Graph", href: "/app/graph",           icon: GitBranch },
   { label: "Command Centre",   href: "/app/command-centre",  icon: LayoutGrid },
   { divider: true },
@@ -20,18 +20,27 @@ const NAV = [
   { label: "Fix Review Board", href: "/app/fix-reviews",     icon: Wrench },
   { divider: true },
   { label: "Contract Trace",   href: "/app/contract-trace",  icon: Activity },
-  { label: "Admin Review",     href: "/app/admin",           icon: Eye },
   { divider: true },
   { label: "Profile & Wallet", href: "/app/profile",         icon: UserCircle },
   { label: "Settings",         href: "/app/settings",        icon: Settings },
 ]
 
-export default function MiniNav() {
+const ADMIN_NAV_ITEM = { label: "Admin Review", href: "/app/admin", icon: Eye }
+
+export default function MiniNav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname()
+
+  const nav = isAdmin
+    ? [
+        ...BASE_NAV.slice(0, BASE_NAV.length - 3),
+        ADMIN_NAV_ITEM,
+        ...BASE_NAV.slice(BASE_NAV.length - 3),
+      ]
+    : BASE_NAV
 
   return (
     <nav className="flex flex-col gap-0.5 p-3 pt-4 flex-1">
-      {NAV.map((item, i) => {
+      {nav.map((item, i) => {
         if ("divider" in item) {
           return <div key={i} className="divider my-2" />
         }

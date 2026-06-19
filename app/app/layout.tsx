@@ -10,9 +10,11 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("onboarding_completed, display_name")
+    .select("onboarding_completed, display_name, role")
     .eq("user_id", user.id)
     .single()
 
-  return <AppShell user={user} profile={profile}>{children}</AppShell>
+  const isAdmin = profile?.role === "admin"
+
+  return <AppShell user={user} profile={profile} isAdmin={isAdmin}>{children}</AppShell>
 }

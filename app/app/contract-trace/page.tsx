@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import Link from "next/link"
 
 export const metadata = { title: "Contract Activity" }
@@ -7,11 +8,20 @@ export default async function ContractTracePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: logs } = await supabase
-    .from("contract_activity_logs")
-    .select(`*, governance_cases(title)`)
-    .eq("user_id", user!.id)
-    .order("created_at", { ascending: false })
+  const { data: profile } = await supabase
+    .from("profiles").select("role").eq("user_id", user!.id).single()
+  const isAdmin = profile?.role === "admin"
+
+  const { data: logs } = isAdmin
+    ? await createAdminClient()
+        .from("contract_activity_logs")
+        .select(`*, governance_cases(title)`)
+        .order("created_at", { ascending: false })
+    : await supabase
+        .from("contract_activity_logs")
+        .select(`*, governance_cases(title)`)
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
 
   const contractAddress =
     process.env.NEXT_PUBLIC_QUALORA_CONTRACT_ADDRESS ||

@@ -9,9 +9,10 @@ export default async function AdminPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/auth/login")
 
-  // Check admin role from JWT claims
-  const { data: { session } } = await supabase.auth.getSession()
-  const role = (session?.user?.user_metadata?.role) ?? (session?.user?.app_metadata?.role)
+  // Check admin role from profiles table (authoritative — no JWT refresh needed)
+  const { data: profileRow } = await supabase
+    .from("profiles").select("role").eq("user_id", user.id).single()
+  const role = profileRow?.role
 
   if (role !== "admin") {
     return (
