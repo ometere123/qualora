@@ -16,7 +16,13 @@ interface Case {
   issue_type: string
   status: string
   dataset_id: string
-  genlayer_governance_verdicts: { verdict: string } | null
+  genlayer_governance_verdicts: { verdict: string }[] | { verdict: string } | null
+}
+
+function getVerdict(raw: Case["genlayer_governance_verdicts"]): string | null {
+  if (!raw) return null
+  if (Array.isArray(raw)) return raw[0]?.verdict ?? null
+  return raw.verdict ?? null
 }
 
 interface Props {
@@ -105,7 +111,7 @@ export default function GovernanceGraph({ datasets, cases }: Props) {
 
         {/* Edges: case → verdict (if exists) */}
         {casePositions
-          .filter((c) => c.genlayer_governance_verdicts)
+          .filter((c) => getVerdict(c.genlayer_governance_verdicts) !== null)
           .map((c) => {
             const x1 = c.x + CARD_W
             const y1 = c.y + CARD_H / 2
@@ -227,9 +233,9 @@ export default function GovernanceGraph({ datasets, cases }: Props) {
 
         {/* Verdict seal nodes */}
         {casePositions
-          .filter((c) => c.genlayer_governance_verdicts)
+          .filter((c) => getVerdict(c.genlayer_governance_verdicts) !== null)
           .map((c) => {
-            const verdict = c.genlayer_governance_verdicts!.verdict
+            const verdict = getVerdict(c.genlayer_governance_verdicts)!
             const vColor = verdictColor(verdict)
             return (
               <g key={`vseal-${c.id}`}>
@@ -262,7 +268,7 @@ export default function GovernanceGraph({ datasets, cases }: Props) {
                   fontWeight={700}
                   fill={vColor}
                 >
-                  {truncate(verdict.replace(/_/g, " ").toUpperCase(), 22)}
+                  {truncate((verdict ?? "").replace(/_/g, " ").toUpperCase(), 22)}
                 </text>
               </g>
             )
