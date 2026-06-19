@@ -1,4 +1,4 @@
-# v0.2.18
+# v0.2.19
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 
 from genlayer import *
@@ -811,21 +811,21 @@ class QualoraDataQualityOracle(gl.Contract):
 
     def _only_owner(self):
         if gl.message.sender_address != self.owner:
-            raise gl.UserError("Only the Qualora contract owner can perform this action.")
+            raise gl.vmUserError("Only the Qualora contract owner can perform this action.")
 
     def _not_paused(self):
         if self.paused:
-            raise gl.UserError("Qualora adjudication is paused by the contract owner.")
+            raise gl.vmUserError("Qualora adjudication is paused by the contract owner.")
 
     def _require_case_id(self, case_id: str):
         if _is_blank(case_id):
-            raise gl.UserError("case_id is required.")
+            raise gl.vmUserError("case_id is required.")
         if len(_strip(case_id)) > 96:
-            raise gl.UserError("case_id is too long.")
+            raise gl.vmUserError("case_id is too long.")
 
     def _require_hash_or_reference(self, evidence_hash: str, evidence_manifest_hash: str):
         if _is_blank(evidence_hash) and _is_blank(evidence_manifest_hash):
-            raise gl.UserError("At least one evidence hash or evidence manifest hash is required.")
+            raise gl.vmUserError("At least one evidence hash or evidence manifest hash is required.")
 
     def _require_no_frontend_verdict(
         self,
@@ -834,11 +834,11 @@ class QualoraDataQualityOracle(gl.Contract):
         candidate_outcome_c: str,
     ):
         if _contains_forbidden_result_key(candidate_outcome_a):
-            raise gl.UserError("candidate_outcome_a must not contain a caller-supplied verdict object.")
+            raise gl.vmUserError("candidate_outcome_a must not contain a caller-supplied verdict object.")
         if _contains_forbidden_result_key(candidate_outcome_b):
-            raise gl.UserError("candidate_outcome_b must not contain a caller-supplied verdict object.")
+            raise gl.vmUserError("candidate_outcome_b must not contain a caller-supplied verdict object.")
         if _contains_forbidden_result_key(candidate_outcome_c):
-            raise gl.UserError("candidate_outcome_c must not contain a caller-supplied verdict object.")
+            raise gl.vmUserError("candidate_outcome_c must not contain a caller-supplied verdict object.")
 
     def _require_submit_quality(
         self,
@@ -856,9 +856,9 @@ class QualoraDataQualityOracle(gl.Contract):
         evidence_hash: str,
     ):
         if _is_blank(dataset_name):
-            raise gl.UserError("dataset_name is required.")
+            raise gl.vmUserError("dataset_name is required.")
         if _enum(issue_type, ALLOWED_ISSUE_TYPES, "other") == "other" and _is_blank(issue_type):
-            raise gl.UserError("issue_type is required.")
+            raise gl.vmUserError("issue_type is required.")
 
         score = _summary_presence_score(
             missingness_summary,
@@ -873,7 +873,7 @@ class QualoraDataQualityOracle(gl.Contract):
             evidence_hash,
         )
         if score < 3:
-            raise gl.UserError("Case packet is too thin. Provide issue evidence, baseline/context, and proposed governance/fix details.")
+            raise gl.vmUserError("Case packet is too thin. Provide issue evidence, baseline/context, and proposed governance/fix details.")
 
     # -----------------------------------------------------------------------
     # Admin
@@ -888,7 +888,7 @@ class QualoraDataQualityOracle(gl.Contract):
     def transfer_ownership(self, new_owner: str):
         self._only_owner()
         if _is_blank(new_owner):
-            raise gl.UserError("new_owner is required.")
+            raise gl.vmUserError("new_owner is required.")
         self.owner = Address(new_owner)
 
     @gl.public.write
@@ -896,7 +896,7 @@ class QualoraDataQualityOracle(gl.Contract):
         self._only_owner()
         self._require_case_id(case_id)
         if case_id not in self.case_exists:
-            raise gl.UserError("Case not found.")
+            raise gl.vmUserError("Case not found.")
         self.case_status[case_id] = STATUS_SUPERSEDED
         audit_item = {
             "event": "case_superseded",
@@ -1090,10 +1090,10 @@ class QualoraDataQualityOracle(gl.Contract):
         self._require_case_id(case_id)
 
         if case_id not in self.case_exists:
-            raise gl.UserError("Case not found.")
+            raise gl.vmUserError("Case not found.")
 
         if _is_blank(recheck_reason):
-            raise gl.UserError("recheck_reason is required.")
+            raise gl.vmUserError("recheck_reason is required.")
 
         base_case = _json_loads_or_empty(self.case_records.get(case_id, "{}"))
         dataset = base_case.get("dataset", {})
@@ -1189,10 +1189,10 @@ class QualoraDataQualityOracle(gl.Contract):
 
         exists = case_id in self.case_exists
         if exists and not is_recheck:
-            raise gl.UserError("Case already exists. Use request_recheck for new evidence or changed remediation.")
+            raise gl.vmUserError("Case already exists. Use request_recheck for new evidence or changed remediation.")
 
         if not exists and is_recheck:
-            raise gl.UserError("Cannot recheck a case that does not exist.")
+            raise gl.vmUserError("Cannot recheck a case that does not exist.")
 
         current_version = u256(0)
         if exists:

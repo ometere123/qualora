@@ -135,23 +135,50 @@ export async function POST(request: Request) {
       account: glAccount,
     })
 
-    // Full validator consensus: do not pass leaderOnly here.
-    txHash = await glClient.writeContract({
+    // Determine whether this is a first submission or a recheck (needs_more_evidence resubmit)
+    const caseAlreadyExists = await glClient.readContract({
       address: contractAddress as `0x${string}`,
-      functionName: "submit_case",
-      value: BigInt(0),
-      args: [
-        packet.caseId, packet.datasetName, packet.datasetPurpose, packet.dataDomain,
-        packet.downstreamConsumer, packet.businessCriticality, packet.issueType,
-        packet.affectedColumns, packet.missingnessSummary, packet.duplicationSummary,
-        packet.schemaDriftSummary, packet.freshnessSummary, packet.validitySummary,
-        packet.volumeSummary, packet.historicalBaselineSummary, packet.proposedFix,
-        packet.rollbackPlan, packet.dataContractSummary, packet.sampleRowsHash,
-        packet.schemaSnapshotHash, packet.evidenceHash, packet.evidenceManifestHash,
-        packet.publicEvidenceUrls, packet.analystNotes, packet.candidateOutcomeA,
-        packet.candidateOutcomeB, packet.candidateOutcomeC,
-      ],
-    })
+      functionName: "has_case",
+      args: [caseId],
+    }) as boolean
+
+    // Full validator consensus: do not pass leaderOnly here.
+    if (caseAlreadyExists) {
+      // Resubmit after needs_more_evidence — call request_recheck (21 args, drops immutable fields)
+      const recheckReason = "Additional evidence attached after needs_more_evidence verdict."
+      txHash = await glClient.writeContract({
+        address: contractAddress as `0x${string}`,
+        functionName: "request_recheck",
+        value: BigInt(0),
+        args: [
+          packet.caseId, recheckReason,
+          packet.missingnessSummary, packet.duplicationSummary,
+          packet.schemaDriftSummary, packet.freshnessSummary, packet.validitySummary,
+          packet.volumeSummary, packet.historicalBaselineSummary, packet.proposedFix,
+          packet.rollbackPlan, packet.dataContractSummary, packet.sampleRowsHash,
+          packet.schemaSnapshotHash, packet.evidenceHash, packet.evidenceManifestHash,
+          packet.publicEvidenceUrls, packet.analystNotes, packet.candidateOutcomeA,
+          packet.candidateOutcomeB, packet.candidateOutcomeC,
+        ],
+      })
+    } else {
+      txHash = await glClient.writeContract({
+        address: contractAddress as `0x${string}`,
+        functionName: "submit_case",
+        value: BigInt(0),
+        args: [
+          packet.caseId, packet.datasetName, packet.datasetPurpose, packet.dataDomain,
+          packet.downstreamConsumer, packet.businessCriticality, packet.issueType,
+          packet.affectedColumns, packet.missingnessSummary, packet.duplicationSummary,
+          packet.schemaDriftSummary, packet.freshnessSummary, packet.validitySummary,
+          packet.volumeSummary, packet.historicalBaselineSummary, packet.proposedFix,
+          packet.rollbackPlan, packet.dataContractSummary, packet.sampleRowsHash,
+          packet.schemaSnapshotHash, packet.evidenceHash, packet.evidenceManifestHash,
+          packet.publicEvidenceUrls, packet.analystNotes, packet.candidateOutcomeA,
+          packet.candidateOutcomeB, packet.candidateOutcomeC,
+        ],
+      })
+    }
 
     const receipt = await glClient.waitForTransactionReceipt({
       hash: txHash as Hash,
