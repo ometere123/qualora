@@ -6,6 +6,7 @@ import CommandRibbon from "./CommandRibbon"
 import MiniNav from "./MiniNav"
 import MobileDock from "./MobileDock"
 import CaseDocketDrawer from "./CaseDocketDrawer"
+import VerdictNotifier from "@/components/notifications/VerdictNotifier"
 
 interface Props {
   user: User
@@ -45,6 +46,9 @@ export default function AppShell({ user, profile, isAdmin = false, children }: P
 
       {/* Mobile bottom dock */}
       <MobileDock />
+
+      {/* Realtime verdict notifications */}
+      <VerdictNotifier userId={user.id} />
 
       {/* Case Docket Drawer */}
       {docketCaseId && (

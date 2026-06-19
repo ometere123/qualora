@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { AlertTriangle, Database, Clock, ShieldCheck, Activity } from "lucide-react"
+import RealtimeRefresher from "@/components/command-centre/RealtimeRefresher"
 
 export const metadata = { title: "Command Centre" }
 
@@ -31,6 +32,7 @@ export default async function CommandCentrePage() {
 
   return (
     <div style={{ padding: "28px 32px", maxWidth: 1200 }}>
+      <RealtimeRefresher userId={user!.id} />
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>

@@ -11,7 +11,7 @@ export default async function GraphPage() {
     supabase.from("datasets").select("id, name, governance_status, business_criticality").eq("user_id", user!.id),
     supabase
       .from("governance_cases")
-      .select(`id, issue_type, status, dataset_id, genlayer_governance_verdicts(verdict)`)
+      .select(`id, issue_type, status, dataset_id, proposed_fix, evidence_files(id), genlayer_governance_verdicts(verdict)`)
       .eq("user_id", user!.id)
       .order("created_at", { ascending: false })
       .limit(50),

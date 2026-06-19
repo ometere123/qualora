@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import AdminNoteForm from "@/components/admin/AdminNoteForm"
 
 export const metadata = { title: "Admin" }
 
@@ -201,6 +202,7 @@ export default async function AdminPage() {
             </p>
           </div>
         ))}
+        <AdminNoteForm adminUserId={user.id} />
       </div>
     </div>
   )
