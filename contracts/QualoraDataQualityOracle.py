@@ -1,4 +1,4 @@
-# v0.2.19
+# v0.2.18
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 
 from genlayer import *
@@ -484,7 +484,7 @@ def _substantive_match(leader: typing.Dict[str, typing.Any], validator: typing.D
 
     This is intentionally narrow: long-form fields (reasoning_summary,
     dataset_action, fix_assessment) are explanatory and must not be the
-    basis of majority agreement — they are too volatile across independent
+    basis of majority agreement  -  they are too volatile across independent
     LLM calls to produce reliable consensus.
     """
     leader_verdict = _stringify(leader.get("verdict", ""))

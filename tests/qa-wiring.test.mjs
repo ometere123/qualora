@@ -23,7 +23,9 @@ function files(dir = ROOT, acc = []) {
 }
 
 function countSubmitArgs(source) {
-  const start = source.indexOf("args: [")
+  const submitCall = source.indexOf('functionName: "submit_case"')
+  assert.notEqual(submitCall, -1, "submit route must call submit_case")
+  const start = source.indexOf("args: [", submitCall)
   assert.notEqual(start, -1, "submit route must contain writeContract args")
   const end = source.indexOf("],\n    })", start)
   assert.notEqual(end, -1, "submit route args block must terminate before writeContract close")
