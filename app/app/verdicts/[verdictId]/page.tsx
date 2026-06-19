@@ -11,7 +11,7 @@ export default async function VerdictDetailPage({ params }: { params: Promise<{ 
 
   const { data: v } = await supabase
     .from("genlayer_governance_verdicts")
-    .select(`*, governance_cases(title, issue_type, proposed_fix, datasets(name))`)
+    .select(`*, governance_cases(id, issue_type, proposed_fix, datasets(name))`)
     .eq("id", verdictId)
     .eq("user_id", user!.id)
     .single()
@@ -25,7 +25,7 @@ export default async function VerdictDetailPage({ params }: { params: Promise<{ 
       <Link href="/app/verdicts" style={{ fontSize: 13, color: "var(--metadata-grey)" }}>← All Verdicts</Link>
       <div className="flex items-center justify-between mt-4 mb-6">
         <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>
-          {c?.title ?? "Verdict"}
+          {c?.issue_type?.replace(/_/g, " ") ?? "Verdict"}
         </h1>
         <div className="source-of-truth-badge">
           <span className="status-dot" />

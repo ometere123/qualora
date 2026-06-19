@@ -11,7 +11,7 @@ export default async function EvidenceDetailPage({ params }: { params: Promise<{
 
   const { data: f } = await supabase
     .from("evidence_files")
-    .select(`*, governance_cases(title, id, datasets(name))`)
+    .select(`*, governance_cases(id, issue_type, datasets(name))`)
     .eq("id", evidenceId)
     .eq("user_id", user!.id)
     .single()
@@ -30,7 +30,7 @@ export default async function EvidenceDetailPage({ params }: { params: Promise<{
       <div className="audit-panel" style={{ padding: 24, marginBottom: 20 }}>
         <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>FILE DETAILS</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <Field label="Case" value={c?.title ?? f.governance_case_id} />
+          <Field label="Case" value={c?.issue_type?.replace(/_/g, " ") ?? f.governance_case_id} />
           <Field label="Dataset" value={c?.datasets?.name ?? "—"} />
           <Field label="File type" value={f.file_type ?? "—"} />
           <Field label="Uploaded" value={new Date(f.created_at).toUTCString()} />

@@ -134,6 +134,71 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
         </div>
       )}
 
+      {/* Validator summary lanes — 3-lane layout */}
+      {verdict && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 24 }}>
+          {/* Lane 1 — Case submitted */}
+          <div className="audit-panel" style={{ padding: 20 }}>
+            <p className="text-badge-label mb-3" style={{ color: "var(--metadata-grey)" }}>CASE SUBMITTED</p>
+            <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: 10 }}>
+              <div style={{ padding: "10px 12px", background: "var(--frosted-panel)", borderRadius: 8, border: "1px solid var(--schema-line)" }}>
+                <p style={{ fontSize: 10, color: "var(--metadata-grey)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>ISSUE TYPE</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{c.issue_type?.replace(/_/g, " ")}</p>
+              </div>
+              {c.affected_columns && (
+                <div style={{ padding: "10px 12px", background: "var(--frosted-panel)", borderRadius: 8, border: "1px solid var(--schema-line)" }}>
+                  <p style={{ fontSize: 10, color: "var(--metadata-grey)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>AFFECTED COLUMNS</p>
+                  <p style={{ fontSize: 12, color: "var(--control-ink)" }}>{c.affected_columns}</p>
+                </div>
+              )}
+              <div style={{ padding: "10px 12px", background: "var(--frosted-panel)", borderRadius: 8, border: "1px solid var(--schema-line)" }}>
+                <p style={{ fontSize: 10, color: "var(--metadata-grey)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>DATASET</p>
+                <p style={{ fontSize: 12, color: "var(--control-ink)" }}>{dataset?.name ?? "—"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lane 2 — Validator deliberation */}
+          <div className="audit-panel" style={{ padding: 20, borderColor: "rgba(124,58,237,0.20)", background: "rgba(124,58,237,0.02)" }}>
+            <p className="text-badge-label mb-3" style={{ color: "var(--consensus-violet)" }}>VALIDATOR ANALYSIS</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
+                <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>GOVERNANCE CLASS</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.governance_class.replace(/_/g, " ") || "—"}</p>
+              </div>
+              <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
+                <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>EVIDENCE GRADE</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)" }}>{verdict.evidence_grade || "—"}</p>
+              </div>
+              <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
+                <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>FIX SAFETY</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.fix_safety.replace(/_/g, " ") || "—"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lane 3 — Binding consensus */}
+          <div className="audit-panel" style={{ padding: 20, borderColor: govBorderColor(verdict.verdict), textAlign: "center" }}>
+            <p className="text-badge-label mb-3" style={{ color: "var(--metadata-grey)" }}>BINDING CONSENSUS</p>
+            <div style={{ ...verdictStyle(verdict.verdict), padding: "10px 16px", borderRadius: 10, marginBottom: 14 }}>
+              <p style={{ fontFamily: "var(--font-archivo)", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                {verdict.verdict.replace(/_/g, " ") || "—"}
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                <span style={{ color: "var(--metadata-grey)" }}>Severity</span>
+                <span style={{ fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.severity}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                <span style={{ color: "var(--metadata-grey)" }}>Confidence</span>
+                <span style={{ fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.confidence_label.replace(/_/g, " ")}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Verdict — read from GenLayer contract */}
       {verdict && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>

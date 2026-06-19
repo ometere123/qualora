@@ -9,7 +9,7 @@ export default async function EvidencePage() {
 
   const { data: files } = await supabase
     .from("evidence_files")
-    .select(`*, governance_cases(title, datasets(name))`)
+    .select(`*, governance_cases(id, issue_type, datasets(name)), genlayer_governance_verdicts(id)`)
     .eq("user_id", user!.id)
     .order("created_at", { ascending: false })
 
@@ -32,7 +32,7 @@ export default async function EvidencePage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-                {["Filename", "Case", "Dataset", "Type", "Hash", "Uploaded"].map((h) => (
+                {["Filename", "Case", "Dataset", "Type", "Hash", "Used in Consensus", "Uploaded"].map((h) => (
                   <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "var(--metadata-grey)", letterSpacing: "0.05em" }}>{h.toUpperCase()}</th>
                 ))}
               </tr>
@@ -46,7 +46,11 @@ export default async function EvidencePage() {
                     </Link>
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>
-                    {f.governance_cases?.title ?? f.governance_case_id?.slice(0, 8) ?? "—"}
+                    {f.governance_cases
+                      ? <Link href={`/app/cases/${f.governance_cases.id}`} style={{ color: "var(--validation-cyan)", textDecoration: "none" }}>
+                          {f.governance_cases.issue_type?.replace(/_/g, " ") ?? f.governance_case_id?.slice(0, 8)}
+                        </Link>
+                      : f.governance_case_id?.slice(0, 8) ?? "—"}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>
                     {f.governance_cases?.datasets?.name ?? "—"}
@@ -58,6 +62,15 @@ export default async function EvidencePage() {
                     <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>
                       {f.evidence_hash ? f.evidence_hash.slice(0, 16) + "…" : "—"}
                     </span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    {Array.isArray(f.genlayer_governance_verdicts) && f.genlayer_governance_verdicts.length > 0 ? (
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 999, background: "rgba(124,58,237,0.10)", color: "var(--consensus-violet)", letterSpacing: "0.04em" }}>
+                        IN CONSENSUS
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: 11, color: "var(--metadata-grey)" }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)", fontFamily: "var(--font-roboto-mono)" }}>
                     {new Date(f.created_at).toLocaleDateString()}

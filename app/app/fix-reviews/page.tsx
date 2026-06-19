@@ -15,8 +15,9 @@ export default async function FixReviewsPage() {
     .not("proposed_fix", "is", null)
     .order("created_at", { ascending: false })
 
-  const pendingFix = cases?.filter((c: any) => !c.genlayer_governance_verdicts) ?? []
-  const reviewed = cases?.filter((c: any) => !!c.genlayer_governance_verdicts) ?? []
+  const getVerdict = (raw: any) => Array.isArray(raw) ? raw[0] : raw
+  const pendingFix = cases?.filter((c: any) => !getVerdict(c.genlayer_governance_verdicts)) ?? []
+  const reviewed = cases?.filter((c: any) => !!getVerdict(c.genlayer_governance_verdicts)) ?? []
 
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -44,7 +45,7 @@ export default async function FixReviewsPage() {
                       <span style={{ fontSize: 11, color: "var(--metadata-grey)" }}>{c.datasets?.name}</span>
                     </div>
                     <Link href={`/app/cases/${c.id}`} style={{ fontFamily: "var(--font-archivo)", fontSize: 15, fontWeight: 600, color: "var(--control-ink)", textDecoration: "none" }}>
-                      {c.title}
+                      {c.issue_type?.replace(/_/g, " ")}
                     </Link>
                     <div style={{ marginTop: 10, padding: "10px 14px", background: "var(--frosted-panel)", borderRadius: 8, borderLeft: "3px solid var(--policy-amber)" }}>
                       <p style={{ fontSize: 11, fontWeight: 600, color: "var(--policy-amber)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>Proposed fix</p>
@@ -66,7 +67,7 @@ export default async function FixReviewsPage() {
           <p className="text-section-title mb-4" style={{ color: "var(--control-ink)" }}>Reviewed by GenLayer</p>
           <div className="flex flex-col gap-3">
             {reviewed.map((c: any) => {
-              const v = c.genlayer_governance_verdicts
+              const v = getVerdict(c.genlayer_governance_verdicts)
               return (
                 <div key={c.id} className="audit-panel" style={{ padding: 20 }}>
                   <div className="flex items-start justify-between">

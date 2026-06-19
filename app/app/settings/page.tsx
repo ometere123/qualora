@@ -124,6 +124,42 @@ export default function SettingsPage() {
         </div>
       </form>
 
+      {/* Notifications */}
+      <div className="audit-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>NOTIFICATIONS</p>
+        <div className="flex flex-col gap-4">
+          {[
+            { label: "Verdict received", desc: "Notify me when a GenLayer consensus verdict is returned for my case." },
+            { label: "Consensus pending", desc: "Notify me when a submitted case enters the pending consensus state." },
+            { label: "Evidence required", desc: "Notify me when a case needs additional evidence before submission." },
+          ].map((n) => (
+            <div key={n.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderBottom: "1px solid var(--border-subtle)" }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{n.label}</p>
+                <p style={{ fontSize: 12, color: "var(--metadata-grey)", marginTop: 3 }}>{n.desc}</p>
+              </div>
+              <span style={{ fontSize: 11, color: "var(--metadata-grey)", padding: "4px 10px", borderRadius: 999, border: "1px solid var(--schema-line)", background: "var(--frosted-panel)" }}>Coming soon</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Wallet */}
+      <div className="audit-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>EMBEDDED WALLET</p>
+        <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7, marginBottom: 16 }}>
+          Your GenLayer wallet is encrypted with your password and protected by a 12-word recovery phrase.
+          The raw private key never leaves the server. If you forget your password, you must use your recovery phrase.
+        </p>
+        <div style={{ padding: "12px 16px", background: "rgba(217,119,6,0.06)", borderRadius: 8, border: "1px solid rgba(217,119,6,0.20)", marginBottom: 16 }}>
+          <p style={{ fontSize: 12, color: "var(--policy-amber)", lineHeight: 1.6 }}>
+            Your recovery phrase was shown once at signup. If you did not record it, you cannot recover your wallet if you lose your password. Keep it safe and offline.
+          </p>
+        </div>
+        <a href="/app/profile" className="btn-secondary btn-sm">View wallet address</a>
+      </div>
+
+      {/* Security */}
       <div className="audit-panel" style={{ padding: 28, marginBottom: 20 }}>
         <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>SECURITY</p>
         <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7, marginBottom: 16 }}>

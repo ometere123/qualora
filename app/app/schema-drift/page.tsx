@@ -38,13 +38,14 @@ export default async function SchemaDriftPage() {
       {!!cases?.length && (
         <div className="flex flex-col gap-3">
           {cases.map((c: any) => {
-            const verdict = c.genlayer_governance_verdicts
+            const raw = c.genlayer_governance_verdicts
+            const verdict = Array.isArray(raw) ? raw[0] : raw
             return (
               <div key={c.id} className="audit-panel" style={{ padding: 20 }}>
                 <div className="flex items-start justify-between">
                   <div>
                     <Link href={`/app/cases/${c.id}`} style={{ fontFamily: "var(--font-archivo)", fontSize: 15, fontWeight: 600, color: "var(--control-ink)", textDecoration: "none" }}>
-                      {c.title}
+                      {c.issue_type?.replace(/_/g, " ")}
                     </Link>
                     <p style={{ fontSize: 13, color: "var(--metadata-grey)", marginTop: 4 }}>
                       {c.datasets?.name} · {c.affected_columns ?? "affected columns not specified"}

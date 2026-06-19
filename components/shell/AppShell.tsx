@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { User } from "@supabase/supabase-js"
 import CommandRibbon from "./CommandRibbon"
 import MiniNav from "./MiniNav"
+import MobileDock from "./MobileDock"
 import CaseDocketDrawer from "./CaseDocketDrawer"
 
 interface Props {
@@ -37,10 +38,13 @@ export default function AppShell({ user, profile, isAdmin = false, children }: P
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto" style={{ paddingBottom: "env(safe-area-inset-bottom, 60px)" }}>
           {children}
         </main>
       </div>
+
+      {/* Mobile bottom dock */}
+      <MobileDock />
 
       {/* Case Docket Drawer */}
       {docketCaseId && (

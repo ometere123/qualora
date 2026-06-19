@@ -28,6 +28,20 @@ export default async function ContractTracePage() {
     process.env.NEXT_PUBLIC_QUALORA_CONTRACT_ADDRESS ||
     process.env.NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS
 
+  // Failed cases eligible for retry
+  const { data: failedCases } = isAdmin
+    ? await createAdminClient()
+        .from("governance_cases")
+        .select("id, issue_type, datasets(name)")
+        .eq("status", "genlayer_failed")
+        .order("created_at", { ascending: false })
+    : await supabase
+        .from("governance_cases")
+        .select("id, issue_type, datasets(name)")
+        .eq("status", "genlayer_failed")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
+
   return (
     <div style={{ padding: "28px 32px" }}>
       <div className="flex items-center justify-between mb-6">
@@ -44,6 +58,36 @@ export default async function ContractTracePage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span className="hash-block" style={{ flex: 1 }}>{contractAddress}</span>
             <span style={{ fontSize: 12, color: "var(--governance-green)", fontWeight: 600 }}>QualoraDataQualityOracle</span>
+          </div>
+        </div>
+      )}
+
+      {/* Retry queue — failed cases */}
+      {!!failedCases?.length && (
+        <div className="audit-panel" style={{ marginBottom: 20, overflow: "hidden", borderColor: "rgba(220,38,38,0.25)" }}>
+          <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(220,38,38,0.15)", background: "rgba(220,38,38,0.04)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--quarantine-red)", fontFamily: "var(--font-archivo)" }}>
+              Retry Queue — Failed Submissions
+            </p>
+            <span style={{ fontSize: 11, color: "var(--quarantine-red)" }}>{failedCases.length} case{failedCases.length !== 1 ? "s" : ""}</span>
+          </div>
+          <div style={{ padding: "12px 20px" }}>
+            <p style={{ fontSize: 12, color: "var(--metadata-grey)", marginBottom: 12, lineHeight: 1.5 }}>
+              These cases failed during GenLayer submission. Open the case to retry with updated evidence or fix the proposal before resubmitting.
+            </p>
+            <div className="flex flex-col gap-2">
+              {(failedCases as any[]).map((c) => (
+                <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "rgba(220,38,38,0.04)", borderRadius: 8, border: "1px solid rgba(220,38,38,0.15)" }}>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--quarantine-red)" }}>{c.issue_type?.replace(/_/g, " ")}</p>
+                    <p style={{ fontSize: 11, color: "var(--metadata-grey)", marginTop: 2 }}>{c.datasets?.name} · {c.id.slice(0, 8).toUpperCase()}</p>
+                  </div>
+                  <a href={`/app/cases/${c.id}`} style={{ fontSize: 12, fontWeight: 600, color: "var(--quarantine-red)", textDecoration: "none", padding: "6px 12px", border: "1px solid rgba(220,38,38,0.30)", borderRadius: 6 }}>
+                    Open to retry →
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

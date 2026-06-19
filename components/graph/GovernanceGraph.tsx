@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Plus, Info } from "lucide-react"
+import CaseDocketDrawer from "@/components/shell/CaseDocketDrawer"
 
 interface Dataset {
   id: string
@@ -47,6 +48,7 @@ const CASE_COLOR: Record<string, string> = {
 
 export default function GovernanceGraph({ datasets, cases }: Props) {
   const [selected, setSelected] = useState<string | null>(null)
+  const [docketCaseId, setDocketCaseId] = useState<string | null>(null)
 
   if (datasets.length === 0 && cases.length === 0) {
     return <EmptyGraph />
@@ -185,7 +187,7 @@ export default function GovernanceGraph({ datasets, cases }: Props) {
           const isPending = c.status === "pending_consensus"
           const isSelected = selected === c.id
           return (
-            <g key={c.id} onClick={() => setSelected(isSelected ? null : c.id)} style={{ cursor: "pointer" }}>
+            <g key={c.id} onClick={() => setSelected(isSelected ? null : c.id)} onDoubleClick={() => setDocketCaseId(c.id)} style={{ cursor: "pointer" }}>
               <rect
                 x={c.x}
                 y={c.y}
@@ -295,6 +297,18 @@ export default function GovernanceGraph({ datasets, cases }: Props) {
           </text>
         ))}
       </svg>
+
+      {/* Case Docket Drawer — opens on double-click of any case node */}
+      {docketCaseId && (
+        <CaseDocketDrawer caseId={docketCaseId} onClose={() => setDocketCaseId(null)} />
+      )}
+
+      {/* Hint */}
+      <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }}>
+        <span style={{ fontSize: 11, color: "var(--metadata-grey)", fontFamily: "var(--font-source-sans)" }}>
+          Click to select · Double-click a case to open docket
+        </span>
+      </div>
     </div>
   )
 }
