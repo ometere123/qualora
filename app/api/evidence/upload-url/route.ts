@@ -33,15 +33,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: storageErr.message }, { status: 500 })
     }
 
-    // Record in database
+    // Get public URL for the uploaded file
+    const { data: { publicUrl: fileUrl } } = admin.storage
+      .from("evidence-files")
+      .getPublicUrl(storagePath)
+
+    // Record in database — column names must match the evidence_files schema exactly
     const { data: record, error: dbErr } = await admin.from("evidence_files").insert({
       user_id: user.id,
       governance_case_id: caseId,
-      storage_path: storagePath,
-      original_filename: file.name,
+      file_path: storagePath,
+      file_url: fileUrl,
+      file_bucket: "evidence-files",
       file_type: file.type,
-      file_size_bytes: buffer.byteLength,
+      file_size: buffer.byteLength,
       evidence_hash: evidenceHash,
+      uploaded_by: user.id,
     }).select("id").single()
 
     if (dbErr) {

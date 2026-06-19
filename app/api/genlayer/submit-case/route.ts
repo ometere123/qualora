@@ -91,15 +91,15 @@ export async function POST(request: Request) {
     }
 
     const { data: evidenceFiles } = await admin
-      .from("evidence_files").select("file_hash,evidence_hash").eq("data_source_id", (caseRow as Record<string, string | null>).data_source_id)
+      .from("evidence_files").select("evidence_hash").eq("governance_case_id", caseId)
 
     const packet = buildPacket(
       caseRow as Record<string, string | null>,
       (caseRow as { datasets?: Record<string, string | null> }).datasets ?? {},
       [
         profileRow.evidence_manifest_hash,
-        ...((evidenceFiles ?? []) as Array<{ file_hash?: string | null; evidence_hash?: string | null }>)
-          .map((e) => e.file_hash ?? e.evidence_hash ?? "")
+        ...((evidenceFiles ?? []) as Array<{ evidence_hash?: string | null }>)
+          .map((e) => e.evidence_hash ?? "")
           .filter(Boolean),
       ],
       publicEvidenceUrls,
