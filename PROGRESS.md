@@ -1,7 +1,7 @@
 # Qualora — Build Progress
 
-## Status: Active Development
-Last updated: 2026-06-18
+## Status: Feature Complete
+Last updated: 2026-06-19
 
 ---
 
@@ -9,11 +9,9 @@ Last updated: 2026-06-18
 
 ### Auth
 - [x] Email/password signup
-- [x] "Check your email" screen when confirmation is on
-- [x] Immediate session flow when confirmation is off (current dev mode)
 - [x] Login page
 - [x] Forgot password (sends reset link via Brevo SMTP)
-- [x] Reset password page — no seed phrase, just set new password
+- [x] Reset password page — rewraps wallet encryption key, no wallet replacement
 - [x] Auth callback route — wallet + profile created here after confirmation
 - [x] Middleware guards all `/app/*` routes
 
@@ -22,101 +20,92 @@ Last updated: 2026-06-18
 - [x] Private key encrypted with AES-256-GCM
 - [x] WEK wrapped with PBKDF2(WALLET_MASTER_SECRET:userId) — no user password needed
 - [x] Wallet permanently linked to account — survives password reset
-- [x] No seed phrase shown to users — managed embedded wallet model
-- [x] Wallet creation moved to `/auth/callback` to avoid FK violations
+- [x] Recovery phrase shown once at signup (12 words), stored encrypted
+- [x] Password reset rewraps WEK using recovery phrase — wallet address never changes
 
 ### Database
-- [x] Migration SQL written (12 tables + RLS + storage bucket)
-- [x] Migration run against Supabase project
-- [x] Service role grants applied (`GRANT ALL ON ALL TABLES`)
-- [ ] RLS policies for authenticated client reads/writes need one more SQL patch (profiles update currently failing)
+- [x] 12 tables + RLS + storage bucket migration applied
+- [x] Service role grants applied
+- [x] RLS policies for authenticated client reads/writes in place
+- [x] Admin role stored in `profiles.role`, read server-side (never from stale JWT)
+- [x] `admin_review_notes` RLS policy: insert allowed for authenticated admins only
 
 ### GenLayer Contract
 - [x] `QualoraDataQualityOracle` deployed to GenLayer StudioNet
 - [x] Contract address: `0x49852638d1A3DA1996380b1e88923439d9713235`
 - [x] `submit_case` accepts a 27-parameter data governance packet
-- [x] `get_case_summary_card` is the primary read surface for finalized verdict data
-- [x] GenLayer non-deterministic validator consensus is used to adjudicate each case
-- [x] Leader and validator functions independently assess dataset risk, fix safety, evidence quality, and downstream impact
-- [x] Optional public evidence URL access allows validators to inspect supporting evidence during review
-- [x] Contract rejects caller-supplied verdict fields so the frontend cannot pre-decide the outcome
-- [x] Supabase mirrors case state for UI only; the GenLayer contract remains the canonical verdict source
+- [x] Full validator consensus — `leaderOnly` is never used
+- [x] `get_case_summary_card` + `get_latest_decision` are the canonical read surfaces
+- [x] Contract rejects caller-supplied verdict fields — frontend cannot pre-decide outcome
+- [x] Supabase mirrors case state for UI only; GenLayer contract is the source of truth
 
 ### Data Source Intake
-
-- [x] Qualora supports both uploaded datasets and connected data sources from the start
-- [x] Upload intake supports CSV, Excel, JSON, exported reports, and schema evidence
-- [x] Connector intake supports Supabase, PostgreSQL, API endpoints, BigQuery, and Snowflake
-- [x] All data sources pass through one shared profiling pipeline
-- [x] Qualora profiles datasets off-chain before GenLayer submission
-- [x] Private files and evidence are stored in Supabase Storage
-- [x] GenLayer receives only structured summaries, evidence hashes, manifest hashes, optional public evidence URLs, and governance metadata
-- [x] Full datasets are never uploaded directly to GenLayer
-- [x] Supabase mirrors source/profile/case state for UI while GenLayer remains the canonical verdict source
+- [x] Upload intake: CSV, Excel, JSON, schema evidence
+- [x] Connector intake: Supabase, PostgreSQL, API, BigQuery, Snowflake
+- [x] All data sources pass through shared profiling pipeline
+- [x] GenLayer receives only structured summaries, evidence hashes, and governance metadata
+- [x] Full datasets are never uploaded to GenLayer
 
 ### Frontend — Shell
-- [x] Command Ribbon (76px sticky, StudioNet status, open cases count)
-- [x] MiniNav sidebar (15 nav items, GenLayer source-of-truth badge)
-- [x] Case Docket Drawer (right slide-in, case + verdict preview)
+- [x] Command Ribbon (sticky, StudioNet status badge, open cases count, search)
+- [x] MiniNav sidebar (all nav items, admin item shown only to admins, GenLayer badge)
+- [x] MobileDock (bottom nav bar, 5 core items, safe-area aware)
+- [x] Case Docket Drawer (right slide-in from graph double-click or ribbon)
 - [x] App layout with onboarding gate
+- [x] VerdictNotifier — Supabase Realtime toast when a new verdict arrives (app-wide)
 
 ### Frontend — Pages
-- [x] Landing page (dark navy, governance graph preview)
-- [x] Governance Graph (SVG node graph — datasets → cases → verdicts)
-- [x] Command Centre (stats, open cases, recent verdicts, contract activity)
-- [x] Onboarding (3 steps: profile → organisation → complete, no seed phrase)
-- [x] Datasets list + new dataset form + dataset detail
-- [x] Cases list + new case wizard (5 steps) + case detail
-- [x] Consensus Chamber (3-column: case facts | validator lanes | verdict seal)
-- [x] Verdicts list + verdict detail
-- [x] Evidence Vault list + evidence detail
-- [x] Contract Trace (full tx log)
-- [x] Schema Drift Lab (filtered case view)
-- [x] Fix Review Board (pending + reviewed fixes)
-- [x] Admin Review page
-- [x] Profile & Wallet page
-- [x] Settings page
+- [x] **Landing page** — hero, problem section, GenLayer adjudication flow, use cases, demo verdict, CTA
+- [x] **Governance Graph** — 5-column SVG: Dataset → Case → Evidence → Fix Proposal → Verdict; double-click case opens docket drawer
+- [x] **Command Centre** — stats, open cases, recent verdicts, contract activity; Supabase Realtime auto-refresh
+- [x] **Onboarding** — 3 steps: profile → organisation → complete
+- [x] **Datasets** — list + new dataset form + dataset detail
+- [x] **Cases** — list + new case wizard (5 steps) + case detail; `needs_more_evidence` banner with resubmit CTA
+- [x] **Consensus Chamber** — 3-lane validator summary (Case / Validator Analysis / Binding Consensus) + full verdict detail grid
+- [x] **Verdicts** — list (verdict badge links to `/verdicts/[id]`) + verdict detail
+- [x] **Evidence Vault** — list with "Used in Consensus" badge + evidence detail; fixed join (no `title` column)
+- [x] **Contract Trace** — full tx log with retry queue for `genlayer_failed` cases; admin sees all, user sees own
+- [x] **Schema Drift Lab** — filtered to `schema_drift` issue type, renders `schema_drift_summary`
+- [x] **Fix Review Board** — pending and reviewed fixes, reads `fix_assessment` and `dataset_action` from verdict
+- [x] **Admin Console** — stats (users/cases/verdicts/failed), all-cases table, all-users table, failed cases list, admin notes with add form
+- [x] **Profile & Wallet** — wallet address, recovery phrase status
+- [x] **Settings** — profile edit, notifications section, embedded wallet section, security, sign out
 
 ### GenLayer Integration
-- [x] `submit_case` route — unwraps managed wallet, signs tx, submits to StudioNet
-- [x] `sync_verdict` route — polls receipt, reads `get_case_summary_card`, mirrors to Supabase
-- [x] `retry` route — resets stuck case back to open
-- [x] Submit button — no password modal (managed wallet signs silently)
-- [x] Polling with violet pulse animation while validators deliberate
-- [x] Redirect to Consensus Chamber on finalization
+- [x] `submit-case` route — unwraps managed wallet, signs tx, polls for finalized receipt
+- [x] On `needs_more_evidence` verdict — case status resets to `evidence_attached` for resubmission
+- [x] On `quarantine_dataset` / `approved` / `approved_with_warning` — `datasets.governance_status` auto-updated
+- [x] Tx hashes link to `explorer-studio.genlayer.com/tx/[hash]`
+- [x] Retry queue in Contract Trace for any `genlayer_failed` cases
 
 ### Evidence
-- [x] Upload route (multipart, stores in Supabase Storage, SHA-256 hash)
-- [x] Hash route
-- [x] Evidence included in governance packet sent to contract
+- [x] Upload route (multipart, Supabase Storage, SHA-256 hash)
+- [x] Evidence included in governance packet
+- [x] "Used in Consensus" badge in Evidence Vault when case has a verdict
+
+### Notifications (Realtime)
+- [x] Supabase Realtime enabled on `genlayer_governance_verdicts` and `governance_cases`
+- [x] Toast notification fires on verdict INSERT (any page in the app)
+- [x] Command Centre stats auto-refresh on case/verdict changes
+
+### Admin
+- [x] Role checked from `profiles.role` server-side — JWT staleness not an issue
+- [x] Admin sees all cases and verdicts (service role client)
+- [x] Admin console: cross-user cases table, failed cases, user list, admin notes
+- [x] Admin notes: read existing + add new from UI
 
 ### Email (Brevo)
-- [x] Brevo SMTP configured in Supabase (smtp-relay.brevo.com:587)
-- [x] SMTP key: qualora key active
-- [x] IP authorized in Brevo
-- [x] Confirmation emails working (rate limited to 2/hr per address in dev)
-- [x] "Confirm email" currently OFF for development
+- [x] Brevo SMTP configured in Supabase
+- [x] Confirmation and password reset emails working
 
 ---
 
-## Pending / Known Issues
+## Known Gaps / Future Work
 
-### Immediate (blocking QA)
-- [ ] RLS policy patch needed — profiles update fails from browser client
-  - Fix: run the 3 SQL policy statements from the last chat message in Supabase SQL editor
-
-### After RLS patch
-- [ ] Complete onboarding QA (steps 1 → 2 → 3)
-- [ ] Register first dataset
-- [ ] Open first governance case
-- [ ] Submit case to GenLayer and see verdict in Consensus Chamber
-
-### Before production
-- [ ] Re-enable "Confirm email" in Supabase Auth
-- [ ] Test full forgot-password → reset → login → wallet intact flow
-- [ ] Add Supabase outbound IPs to Brevo authorized list (for production delivery)
-- [ ] Set `GENLAYER_CONTRACT_ADDRESS` in production env vars
-- [ ] Deploy to Vercel (add all env vars from `.env.local`)
+- Notifications: email/push (only in-app Realtime toast implemented)
+- Private key export: intentionally not implemented (recovery phrase is the backup mechanism)
+- GovernanceGraph: evidence and fix nodes are shown but are not individually clickable (only case nodes open the docket)
+- Validator individual votes: not exposed by the contract's public read functions — only consensus outcome is shown
 
 ---
 
@@ -126,21 +115,23 @@ Last updated: 2026-06-18
 | `NEXT_PUBLIC_SUPABASE_URL` | Set |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Set |
 | `SUPABASE_SERVICE_ROLE_KEY` | Set |
-| `WALLET_MASTER_SECRET` | Set (generated 2026-06-18) |
+| `WALLET_MASTER_SECRET` | Set |
 | `GENLAYER_RPC_URL` | Set (studio.genlayer.com/api) |
 | `GENLAYER_CONTRACT_ADDRESS` | Set (0x49852638...) |
+| `NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS` | Set |
 | `GENLAYER_CHAIN_ID` | Set (61999) |
-| `NEXT_PUBLIC_APP_URL` | Set (http://localhost:3000) |
+| `NEXT_PUBLIC_APP_URL` | Set (qualoraa.vercel.app) |
 
 ---
 
-## Architecture decisions made
+## Architecture Decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| Managed embedded wallet (no seed phrase) | Email = identity anchor. Wallet recovery = account recovery. Simpler UX, acceptable for governance signing app |
-| WEK wrapped with master secret + userId | No user password involved in wallet encryption — survives password resets cleanly |
-| Wallet created in `/auth/callback` not signup | Avoids FK violation — user is guaranteed to exist in `auth.users` at callback time |
-| GenLayer contract is source of truth | Supabase stores a mirror only. `get_case_summary_card` is the canonical read |
-| No seed phrase in onboarding | Replaced with "Your wallet is attached to your account" messaging |
-| Brevo for email delivery | Supabase built-in limited to 2/hr per address; Brevo has no such restriction |
+| Managed embedded wallet (no seed phrase at login) | Email = identity anchor. Simpler UX for a governance signing app |
+| WEK wrapped with master secret + userId | Wallet survives password resets cleanly — no user password in the key derivation |
+| Wallet created in `/auth/callback` | Avoids FK violation — user guaranteed to exist in `auth.users` at callback time |
+| GenLayer contract is source of truth | Supabase stores a mirror only. `get_case_summary_card` is the canonical verdict read |
+| Full validator consensus (no leaderOnly) | Ensures genuine multi-validator adjudication on every case |
+| Admin role from `profiles` table, not JWT | JWT can be stale after role grant — DB read is always current |
+| Brevo for email delivery | Supabase built-in rate-limited to 2/hr per address; Brevo has no such restriction |
