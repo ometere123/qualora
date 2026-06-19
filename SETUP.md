@@ -131,7 +131,7 @@ Open http://localhost:3000
 3. Register a dataset
 4. Open a governance case with affected columns, downstream impact, proposed fix
 5. Attach evidence files
-6. Submit to GenLayer — validators deliberate and reach consensus
+6. Submit to GenLayer  -  validators deliberate and reach consensus
 7. Receive verdict in Consensus Chamber (Realtime toast fires automatically)
 8. Dataset governance status auto-updates on quarantine/approve verdicts
 
@@ -139,8 +139,8 @@ Open http://localhost:3000
 
 ## Notes
 
-- Recovery phrase is shown once at signup — must be saved
-- Password reset uses the recovery phrase to rewrap the wallet key — wallet address never changes
+- Recovery phrase is shown once at signup  -  must be saved
+- Password reset uses the recovery phrase to rewrap the wallet key  -  wallet address never changes
 - GenLayer contract is the authoritative source of truth; Supabase stores a mirror only
-- Admin role is always read from the `profiles` table server-side — never from the JWT
-- Raw private key never leaves the server — only the recovery phrase is the user's backup
+- Admin role is always read from the `profiles` table server-side  -  never from the JWT
+- Raw private key never leaves the server  -  only the recovery phrase is the user's backup

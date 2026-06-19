@@ -12,7 +12,7 @@ export default async function ContractTracePage() {
     .from("profiles").select("role").eq("user_id", user!.id).single()
   const isAdmin = profile?.role === "admin"
 
-  // governance_cases has no "title" column — use issue_type
+  // governance_cases has no "title" column  -  use issue_type
   const { data: logs } = isAdmin
     ? await createAdminClient()
         .from("contract_activity_logs")
@@ -48,7 +48,7 @@ export default async function ContractTracePage() {
         <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>Contract Activity</h1>
         <div className="source-of-truth-badge">
           <span className="status-dot" />
-          StudioNet — Chain 61999
+          StudioNet  -  Chain 61999
         </div>
       </div>
 
@@ -62,12 +62,12 @@ export default async function ContractTracePage() {
         </div>
       )}
 
-      {/* Retry queue — failed cases */}
+      {/* Retry queue  -  failed cases */}
       {!!failedCases?.length && (
         <div className="audit-panel" style={{ marginBottom: 20, overflow: "hidden", borderColor: "rgba(220,38,38,0.25)" }}>
           <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(220,38,38,0.15)", background: "rgba(220,38,38,0.04)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <p style={{ fontSize: 13, fontWeight: 600, color: "var(--quarantine-red)", fontFamily: "var(--font-archivo)" }}>
-              Retry Queue — Failed Submissions
+              Retry Queue  -  Failed Submissions
             </p>
             <span style={{ fontSize: 11, color: "var(--quarantine-red)" }}>{failedCases.length} case{failedCases.length !== 1 ? "s" : ""}</span>
           </div>
@@ -114,7 +114,7 @@ export default async function ContractTracePage() {
               {logs.map((log: any) => (
                 <tr key={log.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)", textTransform: "capitalize" }}>
-                    {log.action?.replace(/_/g, " ") ?? "—"}
+                    {log.action?.replace(/_/g, " ") ?? " - "}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <Link href={`/app/cases/${log.governance_case_id}`} style={{ fontSize: 13, color: "var(--validation-cyan)", textDecoration: "none" }}>
@@ -133,7 +133,7 @@ export default async function ContractTracePage() {
                         {log.transaction_hash.slice(0, 18)}…
                       </a>
                     ) : (
-                      <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>—</span>
+                      <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}> - </span>
                     )}
                   </td>
                   <td style={{ padding: "12px 16px" }}>

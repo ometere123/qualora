@@ -57,7 +57,7 @@ create policy "Users insert own profiles" on public.dataset_profiles
   for insert with check (true);
 
 -- ── evidence_files ───────────────────────────────────────────
--- Table may already exist from migration 0001 — only add missing columns
+-- Table may already exist from migration 0001  -  only add missing columns
 create table if not exists public.evidence_files (
   id                   uuid primary key default gen_random_uuid(),
   case_id              uuid references public.governance_cases(id) on delete cascade,

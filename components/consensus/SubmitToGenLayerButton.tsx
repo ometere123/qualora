@@ -137,7 +137,7 @@ export default function SubmitToGenLayerButton({ caseId, caseData }: Props) {
                   }}
                 >
                   <p style={{ fontSize: 12, color: "var(--metadata-grey)", lineHeight: 1.6 }}>
-                    <strong style={{ color: "var(--consensus-violet)" }}>Managed wallet</strong> — Your Qualora wallet is securely attached to your account. No password or seed phrase is required to sign governance actions.
+                    <strong style={{ color: "var(--consensus-violet)" }}>Managed wallet</strong>  -  Your Qualora wallet is securely attached to your account. No password or seed phrase is required to sign governance actions.
                   </p>
                 </div>
 

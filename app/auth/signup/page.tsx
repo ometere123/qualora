@@ -43,7 +43,7 @@ function SignupForm() {
 
     if (signUpError) {
       const msg = signUpError.message
-      setError(!msg || msg === "{}" ? "Signup failed — check your Supabase email settings." : msg)
+      setError(!msg || msg === "{}" ? "Signup failed  -  check your Supabase email settings." : msg)
       setLoading(false)
       return
     }
@@ -62,7 +62,7 @@ function SignupForm() {
       return
     }
 
-    // Confirmation required — show check-email screen
+    // Confirmation required  -  show check-email screen
     setLoading(false)
     router.push("/auth/signup?sent=1")
     router.refresh()
@@ -195,7 +195,7 @@ function SignupForm() {
               lineHeight: 1.6,
             }}
           >
-            <span style={{ color: "#7C3AED", fontWeight: 600 }}>Embedded wallet</span> — A blockchain wallet is
+            <span style={{ color: "#7C3AED", fontWeight: 600 }}>Embedded wallet</span>  -  A blockchain wallet is
             automatically created and encrypted with your password. You will set a recovery key in the next step.
           </div>
 

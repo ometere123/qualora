@@ -77,12 +77,12 @@ export default async function VerdictDetailPage({ params }: { params: Promise<{ 
           </div>
           <div>
             <p className="text-meta mb-1">Evidence digest</p>
-            <span className="hash-block">{v.evidence_digest ?? "—"}</span>
+            <span className="hash-block">{v.evidence_digest ?? " - "}</span>
           </div>
           <div>
             <p className="text-meta mb-1">Finalized</p>
             <p style={{ fontSize: 12, fontFamily: "var(--font-roboto-mono)", color: "var(--control-ink)" }}>
-              {v.consensus_timestamp ? new Date(v.consensus_timestamp).toUTCString() : "—"}
+              {v.consensus_timestamp ? new Date(v.consensus_timestamp).toUTCString() : " - "}
             </p>
           </div>
         </div>

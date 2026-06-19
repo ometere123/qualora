@@ -19,7 +19,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
 
   if (!c) notFound()
 
-  // Query verdict separately — join via PostgREST embed can miss rows when RLS
+  // Query verdict separately  -  join via PostgREST embed can miss rows when RLS
   // policies don't align perfectly with the join context
   const { data: verdictRow } = await supabase
     .from("genlayer_governance_verdicts")
@@ -84,7 +84,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
               GenLayer validators need more evidence
             </p>
             <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7, marginBottom: 12 }}>
-              The validators could not reach a confident verdict with the current evidence. Upload additional files — statistical summaries, schema snapshots, or CSV samples — then resubmit to GenLayer.
+              The validators could not reach a confident verdict with the current evidence. Upload additional files  -  statistical summaries, schema snapshots, or CSV samples  -  then resubmit to GenLayer.
             </p>
             {verdict.reasoning_summary && (
               <p style={{ fontSize: 13, color: "var(--control-ink)", lineHeight: 1.6, fontStyle: "italic", marginBottom: 12 }}>
@@ -183,7 +183,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", background: "var(--frosted-panel)", borderRadius: 8, border: "1px solid var(--schema-line)" }}>
                   <div>
                     <p style={{ fontSize: 13, color: "var(--control-ink)", fontWeight: 600 }}>{f.file_type.toUpperCase()}</p>
-                    <p className="hash-block mt-1" style={{ display: "inline-block" }}>{f.file_hash?.slice(0, 16) ?? f.evidence_hash?.slice(0, 16) ?? "—"}…</p>
+                    <p className="hash-block mt-1" style={{ display: "inline-block" }}>{f.file_hash?.slice(0, 16) ?? f.evidence_hash?.slice(0, 16) ?? " - "}…</p>
                   </div>
                   <span style={{ fontSize: 11, color: "var(--metadata-grey)" }}>
                     {(f.file_size / 1024).toFixed(1)} KB
@@ -213,20 +213,20 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
               <div>
                 <p className="text-meta mb-1">Verdict</p>
                 <span className={`verdict-badge ${verdictClass(verdict?.verdict)}`}>
-                  {verdict?.verdict?.replace(/_/g, " ") ?? "—"}
+                  {verdict?.verdict?.replace(/_/g, " ") ?? " - "}
                 </span>
               </div>
               <div>
                 <p className="text-meta mb-1">Severity</p>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.severity ?? "—"}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.severity ?? " - "}</p>
               </div>
               <div>
                 <p className="text-meta mb-1">Confidence</p>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.confidence_label ?? "—"}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.confidence_label ?? " - "}</p>
               </div>
               <div>
                 <p className="text-meta mb-1">Dataset action</p>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.dataset_action ?? "—"}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{verdict?.dataset_action ?? " - "}</p>
               </div>
             </div>
             {verdict.reasoning_summary && (

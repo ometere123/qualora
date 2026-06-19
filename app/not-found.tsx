@@ -8,7 +8,7 @@ export default function NotFound() {
     >
       <div className="text-center">
         <p className="text-badge-label mb-4" style={{ color: "#06B6D4" }}>
-          GOVERNANCE ROUTE NOT FOUND — 404
+          GOVERNANCE ROUTE NOT FOUND  -  404
         </p>
         <h1
           className="text-page-title mb-4"

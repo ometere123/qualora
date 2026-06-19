@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // getSession reads from the cookie — no outbound network call, no timeout risk
+  // getSession reads from the cookie  -  no outbound network call, no timeout risk
   const {
     data: { session },
   } = await supabase.auth.getSession()
@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
   const user = session?.user ?? null
   const path = request.nextUrl.pathname
 
-  // Guard all /app/* routes — unauthenticated users go to login
+  // Guard all /app/* routes  -  unauthenticated users go to login
   if (path.startsWith("/app") && !user) {
     const url = new URL("/auth/login", request.url)
     url.searchParams.set("next", path)

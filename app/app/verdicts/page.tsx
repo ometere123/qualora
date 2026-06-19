@@ -12,7 +12,7 @@ export default async function VerdictsPage() {
     .from("profiles").select("role").eq("user_id", user!.id).single()
   const isAdmin = profile?.role === "admin"
 
-  // governance_cases has no "title" column — use issue_type instead
+  // governance_cases has no "title" column  -  use issue_type instead
   const SELECT = `*, governance_cases(id, issue_type, dataset_id, datasets(name))`
   const { data: verdicts } = isAdmin
     ? await createAdminClient()
@@ -63,7 +63,7 @@ export default async function VerdictsPage() {
                     </Link>
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>
-                    {v.governance_cases?.datasets?.name ?? "—"}
+                    {v.governance_cases?.datasets?.name ?? " - "}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <Link href={`/app/verdicts/${v.id}`} style={{ textDecoration: "none" }}>
@@ -79,7 +79,7 @@ export default async function VerdictsPage() {
                     {v.confidence_label?.replace(/_/g, " ")}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)", fontFamily: "var(--font-roboto-mono)" }}>
-                    {v.consensus_timestamp ? new Date(v.consensus_timestamp).toLocaleDateString() : "—"}
+                    {v.consensus_timestamp ? new Date(v.consensus_timestamp).toLocaleDateString() : " - "}
                   </td>
                 </tr>
               ))}

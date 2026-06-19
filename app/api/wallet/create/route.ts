@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     const admin = createAdminClient()
 
-    // Idempotent — skip if wallet already exists for this user
+    // Idempotent  -  skip if wallet already exists for this user
     const { data: existing } = await admin.from("wallets").select("id, address").eq("user_id", userId).single()
     if (existing) {
       return NextResponse.json({ ok: true, address: existing.address })
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     const bundle = createWalletBundle(userId, masterSecret)
 
-    // 1. Upsert profile — safe if it already exists
+    // 1. Upsert profile  -  safe if it already exists
     const { error: profileError } = await admin.from("profiles").upsert({
       user_id: userId,
       email,
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       .single()
     if (walletError) throw walletError
 
-    // 3. Insert managed wrap — the only wrap, keyed to server master secret
+    // 3. Insert managed wrap  -  the only wrap, keyed to server master secret
     const { error: wrapError } = await admin.from("wallet_key_wraps").insert({
       wallet_id: walletRow.id,
       user_id: userId,

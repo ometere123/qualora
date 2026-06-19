@@ -49,7 +49,7 @@ export default function LandingPage() {
           }}
         >
           Classify missingness, duplication, schema drift, and unsafe fixes
-          with GenLayer validator consensus — before flawed data reaches
+          with GenLayer validator consensus  -  before flawed data reaches
           dashboards, AI systems, or executive decisions.
         </p>
 
@@ -141,11 +141,11 @@ export default function LandingPage() {
           Flawed data reaches decisions before anyone notices
         </h2>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.8, maxWidth: 560, margin: "0 auto 56px" }}>
-          Schema changes break downstream pipelines. Duplicate records distort aggregates. Missing values silently corrupt ML models. Traditional validation rules can&apos;t adjudicate ambiguous cases — they just pass or fail.
+          Schema changes break downstream pipelines. Duplicate records distort aggregates. Missing values silently corrupt ML models. Traditional validation rules can&apos;t adjudicate ambiguous cases  -  they just pass or fail.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 860, margin: "0 auto" }}>
           {[
-            { icon: "⚠", label: "Schema Drift", desc: "Columns renamed, added, or dropped without notice — breaking contracts silently." },
+            { icon: "⚠", label: "Schema Drift", desc: "Columns renamed, added, or dropped without notice  -  breaking contracts silently." },
             { icon: "⧉", label: "Duplication", desc: "Repeated records inflate counts and skew aggregates before analytics runs." },
             { icon: "∅", label: "Missingness", desc: "Null or blank values propagate through joins, corrupting downstream outputs." },
           ].map((p) => (
@@ -165,13 +165,13 @@ export default function LandingPage() {
           GenLayer validators reach consensus on every case
         </h2>
         <p style={{ fontSize: 16, color: "#64748B", lineHeight: 1.8, maxWidth: 560, margin: "0 auto 56px" }}>
-          Each governance case is submitted to an Intelligent Contract on GenLayer. Multiple validators independently evaluate the issue, evidence, and proposed fix — then reach verifiable consensus.
+          Each governance case is submitted to an Intelligent Contract on GenLayer. Multiple validators independently evaluate the issue, evidence, and proposed fix  -  then reach verifiable consensus.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 600, margin: "0 auto" }}>
           {[
             { step: "1", label: "Submit case", desc: "Analyst documents the issue with affected columns, downstream impact, and proposed fix." },
             { step: "2", label: "Attach evidence", desc: "CSV samples, schema snapshots, and statistical summaries are hashed and anchored." },
-            { step: "3", label: "GenLayer consensus", desc: "Multiple validators run independently and vote — producing a binding governance verdict." },
+            { step: "3", label: "GenLayer consensus", desc: "Multiple validators run independently and vote  -  producing a binding governance verdict." },
             { step: "4", label: "Verdict seal", desc: "Outcome is written on-chain: quarantine, approve, approve with warning, or flag for review." },
           ].map((s) => (
             <div key={s.step} style={{ display: "flex", alignItems: "flex-start", gap: 20, padding: "20px 24px", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 12, background: "rgba(124,58,237,0.04)", textAlign: "left" }}>
@@ -230,7 +230,7 @@ export default function LandingPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
             {[
               { label: "Issue type", value: "Schema drift" },
-              { label: "Evidence grade", value: "A — High quality" },
+              { label: "Evidence grade", value: "A  -  High quality" },
               { label: "Confidence", value: "High consensus" },
               { label: "Fix safety", value: "Unsafe to apply" },
             ].map((f) => (
@@ -243,7 +243,7 @@ export default function LandingPage() {
           <div style={{ padding: "16px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)", marginBottom: 16 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", marginBottom: 8, letterSpacing: "0.06em" }}>CONSENSUS REASONING</p>
             <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.7 }}>
-              The dataset exhibits critical schema changes — three columns removed without migration, causing null propagation across 14 downstream aggregates. Validators unanimously classify this as a governance violation requiring quarantine before any further use.
+              The dataset exhibits critical schema changes  -  three columns removed without migration, causing null propagation across 14 downstream aggregates. Validators unanimously classify this as a governance violation requiring quarantine before any further use.
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

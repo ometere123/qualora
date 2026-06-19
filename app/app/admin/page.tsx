@@ -93,7 +93,7 @@ export default async function AdminPage() {
                     </Link>
                     <p style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)", marginTop: 2 }}>{c.id.slice(0, 8).toUpperCase()}</p>
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>{(c as any).datasets?.name ?? "—"}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>{(c as any).datasets?.name ?? " - "}</td>
                   <td style={{ padding: "12px 16px", fontSize: 12, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>{c.user_id?.slice(0, 8)}</td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)" }}>{new Date(c.created_at).toLocaleDateString()}</td>
                 </tr>
@@ -129,7 +129,7 @@ export default async function AdminPage() {
                     </Link>
                     <p style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)", marginTop: 2 }}>{c.id.slice(0, 8).toUpperCase()}</p>
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>{c.datasets?.name ?? "—"}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>{c.datasets?.name ?? " - "}</td>
                   <td style={{ padding: "12px 16px" }}>
                     <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 999, background: "rgba(100,116,139,0.10)", color: "var(--metadata-grey)", textTransform: "uppercase" }}>
                       {c.status?.replace(/_/g, " ")}
@@ -140,7 +140,7 @@ export default async function AdminPage() {
                       <span style={{ fontSize: 11, fontWeight: 600, color: verdictColor(verdict) }}>
                         {verdict.replace(/_/g, " ")}
                       </span>
-                    ) : <span style={{ color: "var(--metadata-grey)", fontSize: 12 }}>—</span>}
+                    ) : <span style={{ color: "var(--metadata-grey)", fontSize: 12 }}> - </span>}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 12, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>{c.user_id?.slice(0, 8)}</td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)" }}>{new Date(c.created_at).toLocaleDateString()}</td>
@@ -168,10 +168,10 @@ export default async function AdminPage() {
             {(allUsers ?? []).map((u: any) => (
               <tr key={u.user_id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                 <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)", fontWeight: 600 }}>
-                  {u.display_name ?? "—"}
+                  {u.display_name ?? " - "}
                 </td>
-                <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--metadata-grey)" }}>{u.email ?? "—"}</td>
-                <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--metadata-grey)" }}>{u.organisation ?? "—"}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--metadata-grey)" }}>{u.email ?? " - "}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--metadata-grey)" }}>{u.organisation ?? " - "}</td>
                 <td style={{ padding: "12px 16px" }}>
                   {u.role === "admin" ? (
                     <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 999, background: "rgba(124,58,237,0.15)", color: "var(--consensus-violet)", textTransform: "uppercase" }}>Admin</span>
@@ -180,7 +180,7 @@ export default async function AdminPage() {
                   )}
                 </td>
                 <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)" }}>
-                  {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
+                  {u.created_at ? new Date(u.created_at).toLocaleDateString() : " - "}
                 </td>
               </tr>
             ))}

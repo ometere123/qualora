@@ -191,7 +191,7 @@ export default function OnboardingPage() {
             >
               <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7 }}>
                 <strong style={{ color: "var(--consensus-violet)" }}>Your Qualora wallet</strong> is securely attached to your account.
-                If you ever recover your account, your wallet comes back with it — no seed phrase required.
+                If you ever recover your account, your wallet comes back with it  -  no seed phrase required.
               </p>
             </div>
 

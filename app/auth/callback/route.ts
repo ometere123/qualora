@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       const masterSecret = process.env.WALLET_MASTER_SECRET!
       const admin = createAdminClient()
 
-      // Ensure profile + wallet exist — idempotent, safe to call multiple times
+      // Ensure profile + wallet exist  -  idempotent, safe to call multiple times
       const { data: existingWallet } = await admin
         .from("wallets").select("id").eq("user_id", user.id).single()
 

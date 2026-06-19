@@ -96,7 +96,7 @@ export default async function CommandCentrePage() {
         <div className="audit-panel" style={{ padding: 0, overflow: "hidden" }}>
           <SectionHeader title="Recent Verdicts" href="/app/verdicts" />
           {(recentVerdicts ?? []).length === 0 ? (
-            <EmptyRow text="No verdicts yet — submit a case to GenLayer" />
+            <EmptyRow text="No verdicts yet  -  submit a case to GenLayer" />
           ) : (
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>

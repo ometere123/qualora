@@ -23,9 +23,9 @@ export default async function ProfilePage() {
       <div className="audit-panel" style={{ padding: 24, marginBottom: 20 }}>
         <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>IDENTITY</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <Field label="Display name" value={profile?.display_name ?? "—"} />
-          <Field label="Email" value={user!.email ?? "—"} />
-          <Field label="Role" value={profile?.role ?? "—"} />
+          <Field label="Display name" value={profile?.display_name ?? " - "} />
+          <Field label="Email" value={user!.email ?? " - "} />
+          <Field label="Role" value={profile?.role ?? " - "} />
           <Field label="Member since" value={new Date(user!.created_at).toLocaleDateString()} />
           <Field label="Onboarding" value={profile?.onboarding_completed ? "Completed" : "Incomplete"} />
         </div>
@@ -63,7 +63,7 @@ export default async function ProfilePage() {
           }}
         >
           <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7 }}>
-            Your wallet is a managed embedded wallet — encrypted server-side and permanently linked to your account.
+            Your wallet is a managed embedded wallet  -  encrypted server-side and permanently linked to your account.
             The private key never leaves the server. Resetting your password does not affect your wallet.
           </p>
         </div>

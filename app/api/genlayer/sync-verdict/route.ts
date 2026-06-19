@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const receipt = await client.getTransactionReceipt({ hash: txHash as `0x${string}` }).catch(() => null)
     if (!receipt) return NextResponse.json({ status: "pending", message: "Transaction not yet finalised" })
 
-    // Read has_case first — fastest check
+    // Read has_case first  -  fastest check
     const exists = await client.readContract({
       address: contractAddress as `0x${string}`,
       functionName: "has_case",

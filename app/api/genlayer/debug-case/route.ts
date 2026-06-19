@@ -67,7 +67,7 @@ export async function GET(request: Request) {
           sample_rows_hash: decoded?.args[18],
         }
       } else {
-        result.calldata = { note: "input not accessible via standard getTransaction on GenLayer — check sim_config in explorer" }
+        result.calldata = { note: "input not accessible via standard getTransaction on GenLayer  -  check sim_config in explorer" }
       }
     } catch (e) { result.tx_error = String(e) }
   }

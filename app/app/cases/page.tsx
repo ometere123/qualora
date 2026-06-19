@@ -58,7 +58,7 @@ export default async function CasesPage() {
                     </p>
                   </td>
                   <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--metadata-grey)" }}>
-                    {c.datasets?.name ?? "—"}
+                    {c.datasets?.name ?? " - "}
                   </td>
                   <td style={{ padding: "14px 20px" }}>
                     <span className={`verdict-badge ${statusClass(c.status)}`}>
@@ -74,7 +74,7 @@ export default async function CasesPage() {
                           {v.replace(/_/g, " ")}
                         </span>
                       ) : (
-                        <span style={{ fontSize: 12, color: "var(--dormant-slate)" }}>—</span>
+                        <span style={{ fontSize: 12, color: "var(--dormant-slate)" }}> - </span>
                       )
                     })()}
                   </td>

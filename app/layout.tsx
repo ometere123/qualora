@@ -3,7 +3,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Qualora — Consensus backed data quality governance",
+    default: "Qualora  -  Consensus backed data quality governance",
     template: "%s | Qualora",
   },
   description:

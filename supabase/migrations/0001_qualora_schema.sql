@@ -1,5 +1,5 @@
 -- ============================================================
--- Qualora — Initial Schema Migration
+-- Qualora  -  Initial Schema Migration
 -- ============================================================
 
 -- Enable UUID extension
@@ -342,7 +342,7 @@ create trigger set_updated_at_governance_cases
   before update on public.governance_cases
   for each row execute function public.handle_updated_at();
 
--- ── Supabase Storage — evidence-files bucket ──────────────
+-- ── Supabase Storage  -  evidence-files bucket ──────────────
 insert into storage.buckets (id, name, public)
 values ('evidence-files', 'evidence-files', false)
 on conflict (id) do nothing;

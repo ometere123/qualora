@@ -31,8 +31,8 @@ export default async function EvidenceDetailPage({ params }: { params: Promise<{
         <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>FILE DETAILS</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <Field label="Case" value={c?.issue_type?.replace(/_/g, " ") ?? f.governance_case_id} />
-          <Field label="Dataset" value={c?.datasets?.name ?? "—"} />
-          <Field label="File type" value={f.file_type ?? "—"} />
+          <Field label="Dataset" value={c?.datasets?.name ?? " - "} />
+          <Field label="File type" value={f.file_type ?? " - "} />
           <Field label="Uploaded" value={new Date(f.created_at).toUTCString()} />
         </div>
       </div>
@@ -61,7 +61,7 @@ function Field({ label, value }: { label: string; value: string | null }) {
   return (
     <div>
       <p className="text-meta mb-1">{label}</p>
-      <p style={{ fontSize: 13, color: "var(--control-ink)" }}>{value ?? "—"}</p>
+      <p style={{ fontSize: 13, color: "var(--control-ink)" }}>{value ?? " - "}</p>
     </div>
   )
 }

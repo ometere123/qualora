@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
               }}
             >
               <p style={{ fontSize: 12, color: "#94A3B8", lineHeight: 1.6 }}>
-                <strong style={{ color: "#7C3AED" }}>Managed wallet</strong> — No seed phrase or recovery key needed. Your wallet comes back with your account.
+                <strong style={{ color: "#7C3AED" }}>Managed wallet</strong>  -  No seed phrase or recovery key needed. Your wallet comes back with your account.
               </p>
             </div>
 

@@ -50,17 +50,17 @@ export default async function EvidencePage() {
                       ? <Link href={`/app/cases/${f.governance_cases.id}`} style={{ color: "var(--validation-cyan)", textDecoration: "none" }}>
                           {f.governance_cases.issue_type?.replace(/_/g, " ") ?? f.governance_case_id?.slice(0, 8)}
                         </Link>
-                      : f.governance_case_id?.slice(0, 8) ?? "—"}
+                      : f.governance_case_id?.slice(0, 8) ?? " - "}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)" }}>
-                    {f.governance_cases?.datasets?.name ?? "—"}
+                    {f.governance_cases?.datasets?.name ?? " - "}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--metadata-grey)", textTransform: "capitalize" }}>
-                    {f.file_type ?? "—"}
+                    {f.file_type ?? " - "}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <span style={{ fontSize: 11, fontFamily: "var(--font-roboto-mono)", color: "var(--metadata-grey)" }}>
-                      {f.evidence_hash ? f.evidence_hash.slice(0, 16) + "…" : "—"}
+                      {f.evidence_hash ? f.evidence_hash.slice(0, 16) + "…" : " - "}
                     </span>
                   </td>
                   <td style={{ padding: "12px 16px" }}>
@@ -69,7 +69,7 @@ export default async function EvidencePage() {
                         IN CONSENSUS
                       </span>
                     ) : (
-                      <span style={{ fontSize: 11, color: "var(--metadata-grey)" }}>—</span>
+                      <span style={{ fontSize: 11, color: "var(--metadata-grey)" }}> - </span>
                     )}
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--metadata-grey)", fontFamily: "var(--font-roboto-mono)" }}>

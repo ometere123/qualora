@@ -47,7 +47,7 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
         ].map((f) => (
           <div key={f.label} className="audit-panel" style={{ padding: "16px 20px" }}>
             <p className="text-meta mb-1">{f.label}</p>
-            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{f.value || "—"}</p>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--control-ink)" }}>{f.value || " - "}</p>
           </div>
         ))}
       </div>

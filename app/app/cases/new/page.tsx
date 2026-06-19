@@ -283,7 +283,7 @@ function NewCaseInner() {
           <div className="audit-panel" style={{ padding: 28 }}>
             <h2 className="text-panel-title mb-2">Choose your data source</h2>
             <p className="text-meta mb-6">
-              Upload a file or connect directly to your database. Either way, Qualora profiles the data and sends only a structured summary to GenLayer — the full dataset never leaves your environment.
+              Upload a file or connect directly to your database. Either way, Qualora profiles the data and sends only a structured summary to GenLayer  -  the full dataset never leaves your environment.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
@@ -441,7 +441,7 @@ function NewCaseInner() {
           <h2 className="text-panel-title mb-2">Which dataset has a quality issue?</h2>
           {sourceType !== "existing" && profile && (
             <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.2)", borderRadius: 8, fontSize: 13, color: "var(--metadata-grey)" }}>
-              Source: <strong style={{ color: "var(--control-ink)" }}>{sourceLabel}</strong> — {profile.row_count.toLocaleString()} rows, {profile.column_count} columns profiled
+              Source: <strong style={{ color: "var(--control-ink)" }}>{sourceLabel}</strong>  -  {profile.row_count.toLocaleString()} rows, {profile.column_count} columns profiled
             </div>
           )}
           <p className="text-meta mb-5">Link this case to a registered dataset for audit trail and graph visibility.</p>
@@ -592,13 +592,13 @@ function NewCaseInner() {
         <div className="audit-panel" style={{ padding: 28 }}>
           <h2 className="text-panel-title mb-2">Candidate governance outcomes</h2>
           <p style={{ fontSize: 14, color: "var(--metadata-grey)", lineHeight: 1.6, marginBottom: 20 }}>
-            Suggest up to three possible outcomes. These are <em>candidates only</em> — the final verdict is determined exclusively by GenLayer validator consensus.
+            Suggest up to three possible outcomes. These are <em>candidates only</em>  -  the final verdict is determined exclusively by GenLayer validator consensus.
           </p>
           <div className="flex flex-col gap-5">
             {[
-              { field: "candidate_outcome_a", label: "Candidate A", eg: "Approved with warning — fix revenue unit only" },
+              { field: "candidate_outcome_a", label: "Candidate A", eg: "Approved with warning  -  fix revenue unit only" },
               { field: "candidate_outcome_b", label: "Candidate B", eg: "Quarantine dataset pending deduplication audit" },
-              { field: "candidate_outcome_c", label: "Candidate C", eg: "Reject proposed fix — needs manual review" },
+              { field: "candidate_outcome_c", label: "Candidate C", eg: "Reject proposed fix  -  needs manual review" },
             ].map(({ field, label, eg }) => (
               <div key={field}>
                 <label className="form-label">{label}</label>
@@ -623,11 +623,11 @@ function NewCaseInner() {
             <h2 className="text-panel-title mb-5">Review governance packet</h2>
             <div className="flex flex-col gap-4">
               {sourceLabel && <Row label="Data source" value={sourceLabel} />}
-              <Row label="Dataset" value={selectedDataset?.name ?? "—"} />
+              <Row label="Dataset" value={selectedDataset?.name ?? " - "} />
               <Row label="Issue type" value={form.issue_type.replace(/_/g, " ")} />
-              <Row label="Affected columns" value={form.affected_columns || "—"} />
-              <Row label="Proposed fix" value={form.proposed_fix || "—"} />
-              <Row label="Downstream impact" value={form.downstream_impact || "—"} />
+              <Row label="Affected columns" value={form.affected_columns || " - "} />
+              <Row label="Proposed fix" value={form.proposed_fix || " - "} />
+              <Row label="Downstream impact" value={form.downstream_impact || " - "} />
               {profile && <>
                 <Row label="Rows profiled" value={profile.row_count.toLocaleString()} />
                 <Row label="Columns" value={String(profile.column_count)} />
@@ -663,7 +663,7 @@ function NewCaseInner() {
               <strong style={{ color: "var(--consensus-violet)" }}>This case will be evaluated by GenLayer validators.</strong>{" "}
               Qualora prepares the governance packet from your profiled data, but the final verdict is not produced by Qualora alone.
               Validators independently classify the issue, review the proposed fix, assess downstream impact, and reach consensus on the most defensible governance outcome.
-              The full dataset is never sent to GenLayer — only structured summaries and evidence hashes.
+              The full dataset is never sent to GenLayer  -  only structured summaries and evidence hashes.
             </p>
           </div>
 

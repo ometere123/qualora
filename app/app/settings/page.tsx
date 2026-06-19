@@ -163,7 +163,7 @@ export default function SettingsPage() {
       <div className="audit-panel" style={{ padding: 28, marginBottom: 20 }}>
         <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>SECURITY</p>
         <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7, marginBottom: 16 }}>
-          Change your password — this also rewraps your embedded wallet encryption key.
+          Change your password  -  this also rewraps your embedded wallet encryption key.
           You will need your recovery phrase to complete this action.
         </p>
         <a href="/auth/reset-password" className="btn-secondary btn-sm">Change password</a>

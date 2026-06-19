@@ -6,7 +6,7 @@ import type { CSSProperties } from "react"
 
 export const metadata = { title: "Consensus Chamber" }
 
-// Read both views from GenLayer — contract is the authoritative source of truth
+// Read both views from GenLayer  -  contract is the authoritative source of truth
 async function readContractVerdict(caseId: string): Promise<{
   summary: Record<string, unknown> | null
   decision: Record<string, unknown> | null
@@ -58,14 +58,14 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
 
   if (!c) notFound()
 
-  // Supabase mirror — used for tx hash, contract address, timestamps
+  // Supabase mirror  -  used for tx hash, contract address, timestamps
   const { data: supabaseVerdict } = await supabase
     .from("genlayer_governance_verdicts")
     .select("*")
     .eq("governance_case_id", caseId)
     .maybeSingle()
 
-  // GenLayer contract — authoritative source of truth for all governance fields
+  // GenLayer contract  -  authoritative source of truth for all governance fields
   const { summary, decision, consensus } = await readContractVerdict(caseId)
 
   const caseFound = summary?.found === true
@@ -134,10 +134,10 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
         </div>
       )}
 
-      {/* Validator summary lanes — 3-lane layout */}
+      {/* Validator summary lanes  -  3-lane layout */}
       {verdict && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 24 }}>
-          {/* Lane 1 — Case submitted */}
+          {/* Lane 1  -  Case submitted */}
           <div className="audit-panel" style={{ padding: 20 }}>
             <p className="text-badge-label mb-3" style={{ color: "var(--metadata-grey)" }}>CASE SUBMITTED</p>
             <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: 10 }}>
@@ -153,36 +153,36 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
               )}
               <div style={{ padding: "10px 12px", background: "var(--frosted-panel)", borderRadius: 8, border: "1px solid var(--schema-line)" }}>
                 <p style={{ fontSize: 10, color: "var(--metadata-grey)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>DATASET</p>
-                <p style={{ fontSize: 12, color: "var(--control-ink)" }}>{dataset?.name ?? "—"}</p>
+                <p style={{ fontSize: 12, color: "var(--control-ink)" }}>{dataset?.name ?? " - "}</p>
               </div>
             </div>
           </div>
 
-          {/* Lane 2 — Validator deliberation */}
+          {/* Lane 2  -  Validator deliberation */}
           <div className="audit-panel" style={{ padding: 20, borderColor: "rgba(124,58,237,0.20)", background: "rgba(124,58,237,0.02)" }}>
             <p className="text-badge-label mb-3" style={{ color: "var(--consensus-violet)" }}>VALIDATOR ANALYSIS</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
                 <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>GOVERNANCE CLASS</p>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.governance_class.replace(/_/g, " ") || "—"}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.governance_class.replace(/_/g, " ") || " - "}</p>
               </div>
               <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
                 <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>EVIDENCE GRADE</p>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)" }}>{verdict.evidence_grade || "—"}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)" }}>{verdict.evidence_grade || " - "}</p>
               </div>
               <div style={{ padding: "10px 12px", background: "rgba(124,58,237,0.06)", borderRadius: 8, border: "1px solid rgba(124,58,237,0.15)" }}>
                 <p style={{ fontSize: 10, color: "var(--consensus-violet)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 4 }}>FIX SAFETY</p>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.fix_safety.replace(/_/g, " ") || "—"}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--control-ink)", textTransform: "capitalize" }}>{verdict.fix_safety.replace(/_/g, " ") || " - "}</p>
               </div>
             </div>
           </div>
 
-          {/* Lane 3 — Binding consensus */}
+          {/* Lane 3  -  Binding consensus */}
           <div className="audit-panel" style={{ padding: 20, borderColor: govBorderColor(verdict.verdict), textAlign: "center" }}>
             <p className="text-badge-label mb-3" style={{ color: "var(--metadata-grey)" }}>BINDING CONSENSUS</p>
             <div style={{ ...verdictStyle(verdict.verdict), padding: "10px 16px", borderRadius: 10, marginBottom: 14 }}>
               <p style={{ fontFamily: "var(--font-archivo)", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                {verdict.verdict.replace(/_/g, " ") || "—"}
+                {verdict.verdict.replace(/_/g, " ") || " - "}
               </p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -199,11 +199,11 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
         </div>
       )}
 
-      {/* Verdict — read from GenLayer contract */}
+      {/* Verdict  -  read from GenLayer contract */}
       {verdict && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
-          {/* LEFT column — case context + verdict seal */}
+          {/* LEFT column  -  case context + verdict seal */}
           <div className="flex flex-col gap-4">
 
             {/* Verdict seal */}
@@ -211,7 +211,7 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
               <p className="text-badge-label mb-4" style={{ color: "var(--consensus-violet)" }}>GENLAYER VERDICT</p>
               <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "12px 24px", borderRadius: 10, marginBottom: 20, ...verdictStyle(verdict.verdict) }}>
                 <span style={{ fontFamily: "var(--font-archivo)", fontSize: 17, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                  {verdict.verdict.replace(/_/g, " ") || "—"}
+                  {verdict.verdict.replace(/_/g, " ") || " - "}
                 </span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, textAlign: "left", marginBottom: 16 }}>
@@ -231,8 +231,8 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
             <div className="audit-panel" style={{ padding: 24 }}>
               <p className="text-badge-label mb-4" style={{ color: "var(--metadata-grey)" }}>CASE SUBMITTED</p>
               <div className="flex flex-col gap-3">
-                <Field label="Dataset" value={dataset?.name ?? "—"} />
-                <Field label="Issue type" value={c.issue_type?.replace(/_/g, " ") ?? "—"} />
+                <Field label="Dataset" value={dataset?.name ?? " - "} />
+                <Field label="Issue type" value={c.issue_type?.replace(/_/g, " ") ?? " - "} />
                 {c.affected_columns && <Field label="Affected columns" value={c.affected_columns} />}
                 {c.downstream_impact && <Field label="Downstream impact" value={c.downstream_impact} />}
                 {c.proposed_fix && <Field label="Proposed fix" value={c.proposed_fix} />}
@@ -251,7 +251,7 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
               <div className="flex flex-col gap-3">
                 <div>
                   <p className="text-meta mb-1">Contract</p>
-                  <span className="hash-block" style={{ fontSize: 10 }}>{verdict.contract_address || "—"}</span>
+                  <span className="hash-block" style={{ fontSize: 10 }}>{verdict.contract_address || " - "}</span>
                 </div>
                 {verdict.transaction_hash && (
                   <div>
@@ -280,7 +280,7 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
             </div>
           </div>
 
-          {/* RIGHT column — governance instructions */}
+          {/* RIGHT column  -  governance instructions */}
           <div className="flex flex-col gap-4">
 
             {/* Dataset action */}
@@ -389,7 +389,7 @@ function MetaChip({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ padding: "8px 10px", background: "var(--frosted-panel)", borderRadius: 6, border: "1px solid var(--schema-line)" }}>
       <p style={{ fontSize: 10, color: "var(--metadata-grey)", fontWeight: 600, letterSpacing: "0.05em", marginBottom: 3 }}>{label.toUpperCase()}</p>
-      <p style={{ fontSize: 12, color: "var(--control-ink)", fontWeight: 600, textTransform: "capitalize" }}>{value || "—"}</p>
+      <p style={{ fontSize: 12, color: "var(--control-ink)", fontWeight: 600, textTransform: "capitalize" }}>{value || " - "}</p>
     </div>
   )
 }

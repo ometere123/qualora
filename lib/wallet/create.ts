@@ -35,7 +35,7 @@ export function aesgcmDecrypt(ciphertext: string, iv: string, tag: string, key: 
 
 export interface WalletBundle {
   address: string
-  encryptedPrivateKey: string  // JSON: { ciphertext, iv, tag } — encrypted with WEK
+  encryptedPrivateKey: string  // JSON: { ciphertext, iv, tag }  -  encrypted with WEK
   encryptionVersion: number
   managedWrap: {               // WEK wrapped with server master secret + userId
     encryptedWalletKey: string // JSON: { ciphertext, iv, tag }
@@ -46,10 +46,10 @@ export interface WalletBundle {
 
 /**
  * Creates a managed embedded wallet.
- * The WEK is wrapped with PBKDF2(WALLET_MASTER_SECRET || userId) — a purely
+ * The WEK is wrapped with PBKDF2(WALLET_MASTER_SECRET || userId)  -  a purely
  * server-side derivation. The user never holds a key material secret.
  * Password reset restores wallet access automatically once the Supabase session
- * is re-established — no seed phrase required.
+ * is re-established  -  no seed phrase required.
  */
 export function createWalletBundle(userId: string, masterSecret: string): WalletBundle {
   // 1. Generate wallet

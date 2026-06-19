@@ -115,11 +115,11 @@ export default function CaseDocketDrawer({ caseId, onClose }: Props) {
             </div>
           ) : caseData ? (
             <div className="flex flex-col gap-5">
-              <Field label="Dataset" value={caseData.datasets?.name ?? "—"} />
+              <Field label="Dataset" value={caseData.datasets?.name ?? " - "} />
               <Field label="Issue type" value={caseData.issue_type} />
-              <Field label="Affected columns" value={caseData.affected_columns ?? "—"} />
-              <Field label="Downstream impact" value={caseData.downstream_impact ?? "—"} />
-              <Field label="Proposed fix" value={caseData.proposed_fix ?? "—"} />
+              <Field label="Affected columns" value={caseData.affected_columns ?? " - "} />
+              <Field label="Downstream impact" value={caseData.downstream_impact ?? " - "} />
+              <Field label="Proposed fix" value={caseData.proposed_fix ?? " - "} />
 
               {/* Status */}
               <div>

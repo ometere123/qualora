@@ -12,7 +12,7 @@ function derivePbkdf2(passphrase: string, salt: Buffer): Buffer {
 
 /**
  * Unwraps the WEK using the server master secret + userId.
- * Called server-side only — never in browser code.
+ * Called server-side only  -  never in browser code.
  */
 export function unwrapWalletKey(
   encryptedWalletKey: string,

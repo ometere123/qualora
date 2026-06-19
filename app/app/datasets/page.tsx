@@ -83,8 +83,8 @@ export default async function DatasetsPage() {
                       {d.name}
                     </p>
                   </td>
-                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--metadata-grey)" }}>{d.domain ?? "—"}</td>
-                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--metadata-grey)" }}>{d.source_system ?? "—"}</td>
+                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--metadata-grey)" }}>{d.domain ?? " - "}</td>
+                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--metadata-grey)" }}>{d.source_system ?? " - "}</td>
                   <td style={{ padding: "14px 20px" }}>
                     <span className={`verdict-badge ${criticality[d.business_criticality] ?? "verdict-needs-evidence"}`}>
                       {d.business_criticality}

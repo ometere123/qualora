@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       .from("evidence-files")
       .getPublicUrl(storagePath)
 
-    // Record in database — column names must match the evidence_files schema exactly
+    // Record in database  -  column names must match the evidence_files schema exactly
     const { data: record, error: dbErr } = await admin.from("evidence_files").insert({
       user_id: user.id,
       governance_case_id: caseId,

@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       .eq("governance_case_id", caseId)
       .eq("status", "pending")
 
-    return NextResponse.json({ ok: true, message: "Case reset to open — you can resubmit to GenLayer." })
+    return NextResponse.json({ ok: true, message: "Case reset to open  -  you can resubmit to GenLayer." })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err)
     return NextResponse.json({ error: msg }, { status: 500 })

@@ -20,7 +20,7 @@ export default async function SchemaDriftPage() {
         <div>
           <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>Schema Drift</h1>
           <p style={{ fontSize: 13, color: "var(--metadata-grey)", marginTop: 4 }}>
-            Governance cases classified as schema_drift — column additions, removals, type changes
+            Governance cases classified as schema_drift  -  column additions, removals, type changes
           </p>
         </div>
         <Link href="/app/cases/new?issue_type=schema_drift" className="btn-primary">New schema drift case</Link>
