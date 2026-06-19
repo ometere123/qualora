@@ -1,0 +1,40 @@
+{
+  "name": "qualora",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test:qa": "node --test tests/qa-wiring.test.mjs",
+    "test:live": "node tests/live-genlayer-e2e.mjs"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^8.3.1",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.10",
+    "@types/pg": "^8.20.0",
+    "ethers": "^6.13.4",
+    "genlayer-js": "^1.1.8",
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.0",
+    "pg": "^8.21.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
+    "snowflake-sdk": "^3.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "^15.1.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,374 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Font variables — system stacks, no Google Fonts download needed ── */
+:root {
+  --font-archivo: "Archivo", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-source-sans: "Source Sans 3", "Source Sans Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-roboto-mono: "Roboto Mono", "Fira Code", ui-monospace, monospace;
+}
+
+/* ── Design Tokens ──────────────────────────────────────────────────── */
+:root {
+  --governance-navy:  #0A1020;
+  --data-steel:       #334155;
+  --validation-cyan:  #06B6D4;
+  --consensus-violet: #7C3AED;
+  --governance-green: #059669;
+  --policy-amber:     #D97706;
+  --quarantine-red:   #DC2626;
+  --review-indigo:    #4F46E5;
+  --ledger-mist:      #F3F6FA;
+  --audit-white:      #FFFFFF;
+  --frosted-panel:    #F8FAFC;
+  --schema-line:      #CBD5E1;
+  --control-ink:      #0F172A;
+  --metadata-grey:    #64748B;
+  --dormant-slate:    #94A3B8;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-source-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--control-ink);
+    background-color: var(--ledger-mist);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-weight: 700;
+    color: var(--control-ink);
+    line-height: 1.2;
+  }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-roboto-mono), "Roboto Mono", monospace;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; border: none; background: none; padding: 0; }
+  img, svg { display: block; }
+
+  ::selection {
+    background-color: rgba(6, 182, 212, 0.18);
+    color: var(--control-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--validation-cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ── Typography Utilities ───────────────────────────────────────────── */
+@layer utilities {
+  .text-hero {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+  .text-page-title {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+  }
+  .text-section-title {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .text-panel-title {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .text-card-title {
+    font-family: var(--font-archivo), "Archivo", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .text-body      { font-size: 16px; line-height: 1.65; }
+  .text-sm-body   { font-size: 14px; line-height: 1.55; }
+  .text-meta      { font-size: 12px; line-height: 1.4; color: var(--metadata-grey); }
+  .text-hash      { font-family: var(--font-roboto-mono), monospace; font-size: 11px; letter-spacing: 0.02em; }
+  .text-badge-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .font-archivo     { font-family: var(--font-archivo), "Archivo", sans-serif; }
+  .font-source-sans { font-family: var(--font-source-sans), "Source Sans 3", sans-serif; }
+  .font-roboto-mono { font-family: var(--font-roboto-mono), "Roboto Mono", monospace; }
+}
+
+/* ── Components ─────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Buttons ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 42px; padding: 0 20px;
+    background: var(--governance-navy); color: #fff;
+    border: 1px solid var(--governance-navy); border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+    transition: opacity 0.15s, transform 0.1s;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-primary:hover   { opacity: 0.85; }
+  .btn-primary:active  { transform: scale(0.97); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 42px; padding: 0 20px;
+    background: var(--audit-white); color: var(--governance-navy);
+    border: 1px solid var(--schema-line); border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-secondary:hover  { background: var(--frosted-panel); border-color: var(--dormant-slate); }
+  .btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* Violet — ONLY for GenLayer submission / contract result actions */
+  .btn-genlayer {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 42px; padding: 0 20px;
+    background: var(--consensus-violet); color: #fff;
+    border: 1px solid var(--consensus-violet); border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+    transition: opacity 0.15s;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-genlayer:hover    { opacity: 0.88; }
+  .btn-genlayer:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn-risk {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 42px; padding: 0 20px;
+    background: var(--quarantine-red); color: #fff;
+    border: 1px solid var(--quarantine-red); border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+    transition: opacity 0.15s;
+    cursor: pointer; text-decoration: none;
+  }
+  .btn-risk:hover { opacity: 0.88; }
+
+  .btn-sm { height: 34px !important; padding: 0 14px !important; font-size: 13px !important; }
+
+  /* ── Form Controls ── */
+  .form-input {
+    width: 100%; height: 42px; padding: 0 13px;
+    background: var(--audit-white); color: var(--control-ink);
+    border: 1px solid var(--schema-line); border-radius: 8px;
+    font-family: var(--font-source-sans), sans-serif; font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none; appearance: none;
+  }
+  .form-input:focus {
+    border-color: var(--validation-cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+  }
+  .form-input::placeholder { color: var(--dormant-slate); }
+  .form-input:disabled { background: var(--frosted-panel); color: var(--dormant-slate); cursor: not-allowed; }
+  .form-input.error { border-color: var(--quarantine-red); }
+
+  .form-textarea {
+    width: 100%; padding: 11px 13px; min-height: 110px;
+    background: var(--audit-white); color: var(--control-ink);
+    border: 1px solid var(--schema-line); border-radius: 8px;
+    font-family: var(--font-source-sans), sans-serif; font-size: 14px; line-height: 1.6;
+    resize: vertical; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-textarea:focus {
+    border-color: var(--validation-cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+  }
+
+  .form-select {
+    width: 100%; height: 42px; padding: 0 36px 0 13px;
+    background: var(--audit-white); color: var(--control-ink);
+    border: 1px solid var(--schema-line); border-radius: 8px;
+    font-family: var(--font-source-sans), sans-serif; font-size: 14px;
+    appearance: none; outline: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-select:focus {
+    border-color: var(--validation-cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+  }
+
+  .form-label {
+    display: block;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--data-steel);
+    margin-bottom: 6px; letter-spacing: 0.01em;
+  }
+  .form-error { font-size: 12px; color: var(--quarantine-red); margin-top: 4px; }
+  .form-hint  { font-size: 12px; color: var(--metadata-grey); margin-top: 4px; }
+
+  /* ── Panels / Cards ── */
+  .audit-panel {
+    background: var(--audit-white);
+    border: 1px solid var(--schema-line);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(10, 16, 32, 0.05);
+  }
+  .audit-panel-elevated {
+    background: var(--audit-white);
+    border: 1px solid var(--schema-line);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(10, 16, 32, 0.09);
+  }
+
+  /* ── Command Ribbon ── */
+  .command-ribbon {
+    height: 76px;
+    background: var(--audit-white);
+    border-bottom: 1px solid var(--schema-line);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  /* ── Verdict Badges ── */
+  .verdict-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .verdict-approved         { background: rgba(5,150,105,0.09);   color: var(--governance-green); border: 1px solid rgba(5,150,105,0.22); }
+  .verdict-approved-warning { background: rgba(217,119,6,0.09);   color: var(--policy-amber);     border: 1px solid rgba(217,119,6,0.22); }
+  .verdict-quarantine       { background: rgba(220,38,38,0.09);   color: var(--quarantine-red);   border: 1px solid rgba(220,38,38,0.22); }
+  .verdict-rejected         { background: rgba(220,38,38,0.09);   color: var(--quarantine-red);   border: 1px solid rgba(220,38,38,0.22); }
+  .verdict-human-review     { background: rgba(79,70,229,0.09);   color: var(--review-indigo);    border: 1px solid rgba(79,70,229,0.22); }
+  .verdict-needs-evidence   { background: rgba(100,116,139,0.09); color: var(--metadata-grey);    border: 1px solid rgba(100,116,139,0.22); }
+  .verdict-pending          { background: rgba(124,58,237,0.09);  color: var(--consensus-violet); border: 1px solid rgba(124,58,237,0.22); }
+
+  /* ── GenLayer Glow (violet — use sparingly) ── */
+  .genlayer-glow   { box-shadow: 0 0 0 1px rgba(124,58,237,0.18), 0 4px 20px rgba(124,58,237,0.10); }
+  .genlayer-border { border: 1px solid rgba(124,58,237,0.30); }
+
+  /* ── Source of Truth Badge ── */
+  .source-of-truth-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 11px;
+    background: rgba(124, 58, 237, 0.07);
+    border: 1px solid rgba(124, 58, 237, 0.18);
+    border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--consensus-violet);
+    text-transform: uppercase;
+  }
+
+  /* ── Hash Block ── */
+  .hash-block {
+    font-family: var(--font-roboto-mono), monospace;
+    font-size: 11px; color: var(--metadata-grey);
+    background: var(--frosted-panel);
+    border: 1px solid var(--schema-line);
+    border-radius: 4px;
+    padding: 2px 7px;
+    word-break: break-all;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Skeleton ── */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--frosted-panel) 25%,
+      var(--schema-line)   50%,
+      var(--frosted-panel) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  /* ── Mini Nav Item ── */
+  .mini-nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 12px; border-radius: 6px;
+    font-family: var(--font-source-sans), sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--metadata-grey);
+    transition: background 0.12s, color 0.12s;
+    cursor: pointer; white-space: nowrap; text-decoration: none;
+  }
+  .mini-nav-item:hover  { background: var(--frosted-panel); color: var(--control-ink); }
+  .mini-nav-item.active { background: rgba(6,182,212,0.08); color: var(--validation-cyan); font-weight: 600; }
+
+  /* ── Divider ── */
+  .divider { border: none; border-top: 1px solid var(--schema-line); }
+
+  /* ── StudioNet status pill ── */
+  .status-pill-online {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 999px;
+    background: rgba(5, 150, 105, 0.09);
+    border: 1px solid rgba(5, 150, 105, 0.22);
+    color: var(--governance-green);
+    font-size: 11px; font-weight: 600;
+    font-family: var(--font-source-sans), sans-serif;
+    letter-spacing: 0.04em;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor; flex-shrink: 0;
+  }
+
+  /* ── Step indicator ── */
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-archivo), sans-serif;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-active   { background: var(--governance-navy); color: #fff; }
+  .step-done     { background: var(--governance-green); color: #fff; }
+  .step-inactive { background: var(--frosted-panel); color: var(--dormant-slate); border: 1px solid var(--schema-line); }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--schema-line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dormant-slate); }
