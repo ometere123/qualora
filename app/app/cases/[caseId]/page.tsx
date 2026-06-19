@@ -60,15 +60,41 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
           </div>
         </div>
         <div className="flex gap-3 flex-shrink-0">
-          {(verdict || c.status === "verdict_received" || c.status === "pending_consensus" || c.status === "submitted_to_genlayer") ? (
-            <Link href={`/app/consensus/${caseId}`} className="btn-genlayer">
-              {c.status === "pending_consensus" || c.status === "submitted_to_genlayer" ? "View Consensus Chamber" : "View Consensus Chamber"}
-            </Link>
+          {verdict?.verdict === "needs_more_evidence" ? (
+            <>
+              <Link href={`/app/consensus/${caseId}`} className="btn-secondary">View verdict</Link>
+              <SubmitToGenLayerButton caseId={caseId} caseData={c} />
+            </>
+          ) : (verdict || c.status === "verdict_received" || c.status === "pending_consensus" || c.status === "submitted_to_genlayer") ? (
+            <Link href={`/app/consensus/${caseId}`} className="btn-genlayer">View Consensus Chamber</Link>
           ) : (
             <SubmitToGenLayerButton caseId={caseId} caseData={c} />
           )}
         </div>
       </div>
+
+      {/* Needs more evidence banner */}
+      {verdict?.verdict === "needs_more_evidence" && (
+        <div style={{ marginBottom: 24, padding: "20px 24px", background: "rgba(217,119,6,0.06)", border: "1px solid rgba(217,119,6,0.25)", borderRadius: 12, display: "flex", alignItems: "flex-start", gap: 16 }}>
+          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(217,119,6,0.12)", border: "1px solid rgba(217,119,6,0.30)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <span style={{ fontSize: 18 }}>⚠</span>
+          </div>
+          <div>
+            <p style={{ fontFamily: "var(--font-archivo)", fontSize: 15, fontWeight: 700, color: "var(--policy-amber)", marginBottom: 6 }}>
+              GenLayer validators need more evidence
+            </p>
+            <p style={{ fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.7, marginBottom: 12 }}>
+              The validators could not reach a confident verdict with the current evidence. Upload additional files — statistical summaries, schema snapshots, or CSV samples — then resubmit to GenLayer.
+            </p>
+            {verdict.reasoning_summary && (
+              <p style={{ fontSize: 13, color: "var(--control-ink)", lineHeight: 1.6, fontStyle: "italic", marginBottom: 12 }}>
+                &ldquo;{verdict.reasoning_summary}&rdquo;
+              </p>
+            )}
+            <SubmitToGenLayerButton caseId={caseId} caseData={c} />
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 

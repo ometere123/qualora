@@ -66,9 +66,11 @@ export default async function VerdictsPage() {
                     {v.governance_cases?.datasets?.name ?? "—"}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
-                    <span className={`verdict-badge verdict-${v.verdict?.replace(/_/g, "-")}`}>
-                      {v.verdict?.replace(/_/g, " ")}
-                    </span>
+                    <Link href={`/app/verdicts/${v.id}`} style={{ textDecoration: "none" }}>
+                      <span className={`verdict-badge verdict-${v.verdict?.replace(/_/g, "-")}`} style={{ cursor: "pointer" }}>
+                        {v.verdict?.replace(/_/g, " ")}
+                      </span>
+                    </Link>
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--control-ink)", textTransform: "capitalize" }}>
                     {v.severity}

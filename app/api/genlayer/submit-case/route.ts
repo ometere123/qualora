@@ -256,13 +256,15 @@ export async function POST(request: Request) {
       status: "finalized",
     })
 
-    await admin.from("governance_cases").update({
-      status: "verdict_received",
-      submitted_to_genlayer_at: new Date().toISOString(),
-    }).eq("id", caseId)
-
     // Apply governance verdict to the dataset
     const finalVerdict = String(card.verdict ?? consensus.verdict ?? "")
+
+    // needs_more_evidence resets the case so user can add evidence and resubmit
+    const caseStatusUpdate = finalVerdict === "needs_more_evidence"
+      ? { status: "evidence_attached", submitted_to_genlayer_at: new Date().toISOString() }
+      : { status: "verdict_received", submitted_to_genlayer_at: new Date().toISOString() }
+
+    await admin.from("governance_cases").update(caseStatusUpdate).eq("id", caseId)
     const datasetId = (caseRow as Record<string, string | null>).dataset_id
     if (datasetId) {
       const newGovernanceStatus =
