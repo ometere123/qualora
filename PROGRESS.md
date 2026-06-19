@@ -32,7 +32,7 @@ Last updated: 2026-06-19
 
 ### GenLayer Contract
 - [x] `QualoraDataQualityOracle` deployed to GenLayer StudioNet
-- [x] Contract address: `0x49852638d1A3DA1996380b1e88923439d9713235`
+- [x] Contract address: `0x708f46749b7faC69768A6E4c18B559415dFEB98e`
 - [x] `submit_case` accepts a 27-parameter data governance packet
 - [x] Full validator consensus — `leaderOnly` is never used
 - [x] `get_case_summary_card` + `get_latest_decision` are the canonical read surfaces

@@ -35,7 +35,7 @@ Qualora lets data teams classify missingness, duplication, schema drift, and uns
 
 ## Contract
 
-- **Address:** `0x49852638d1A3DA1996380b1e88923439d9713235`
+- **Address:** `0x708f46749b7faC69768A6E4c18B559415dFEB98e`
 - **Network:** GenLayer StudioNet
 - **Explorer:** https://explorer-studio.genlayer.com
 - **Key functions:** `submit_case`, `get_case_summary_card`, `get_latest_decision`, `has_case`, `get_case_status`

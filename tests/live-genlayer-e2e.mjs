@@ -10,7 +10,7 @@ const { loadEnvConfig } = nextEnv
 loadEnvConfig(process.cwd())
 
 const BASE_URL = process.env.QUALORA_E2E_BASE_URL ?? "http://localhost:3000"
-const CONTRACT = "0x49852638d1A3DA1996380b1e88923439d9713235"
+const CONTRACT = "0x708f46749b7faC69768A6E4c18B559415dFEB98e"
 let currentStage = "startup"
 
 function safeError(err) {

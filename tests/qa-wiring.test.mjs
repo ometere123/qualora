@@ -4,7 +4,7 @@ import { join, relative } from "node:path"
 import { test } from "node:test"
 
 const ROOT = process.cwd()
-const NEW_ADDRESS = "0x49852638d1A3DA1996380b1e88923439d9713235"
+const NEW_ADDRESS = "0x708f46749b7faC69768A6E4c18B559415dFEB98e"
 const OLD_ADDRESS = ["0x0f56ef8082ACefb", "146F69951538217bf9e6a8418"].join("")
 
 function read(path) {
