@@ -54,14 +54,11 @@ export default function CommandRibbon({ user, onOpenDocket: _onOpenDocket }: Pro
     }
     loadStats()
 
-    // Check StudioNet reachability
-    fetch("https://studio.genlayer.com/api", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", method: "net_version", params: [], id: 1 }),
-      signal: AbortSignal.timeout(5000),
-    })
-      .then(() => setNetworkOk(true))
+    // Check StudioNet reachability through the app server so browser CORS
+    // does not make a healthy RPC endpoint look offline.
+    fetch("/api/genlayer/status", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((status) => setNetworkOk(Boolean(status.online)))
       .catch(() => setNetworkOk(false))
   }, [])
 
