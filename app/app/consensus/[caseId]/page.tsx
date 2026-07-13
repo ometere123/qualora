@@ -96,7 +96,7 @@ export default async function ConsensusChamberPage({ params }: { params: Promise
   } : null
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))", maxWidth: 1100 }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
