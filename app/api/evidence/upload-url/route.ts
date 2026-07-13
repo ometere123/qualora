@@ -20,7 +20,9 @@ export async function POST(request: Request) {
     // Read file bytes for hashing
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const evidenceHash = sha256Hex(buffer.toString("base64"))
+    // GenLayer hashes the fetched response body bytes, so persist the digest
+    // of the raw uploaded bytes (not the Base64 representation).
+    const evidenceHash = sha256Hex(buffer)
 
     // Store in Supabase Storage under user-scoped path
     const storagePath = `${user.id}/${caseId}/${Date.now()}-${file.name}`
