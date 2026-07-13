@@ -246,9 +246,16 @@ function NewCaseInner() {
     : (sourceType === "file_upload" ? uploadStatus === "done" : !!dataSourceId)
   const hasRequiredHashes = Boolean(profile?.raw_sample_hash && profile.schema_snapshot_hash && profile.evidence_manifest_hash && profile.profile_hash)
   const canSubmit = Boolean(form.dataset_id && form.issue_type && form.downstream_impact.trim() && form.proposed_fix.trim() && hasRequiredHashes)
+  const stickyActionStyle: React.CSSProperties = {
+    position: "sticky",
+    bottom: "calc(92px + env(safe-area-inset-bottom))",
+    zIndex: 5,
+    padding: "14px 0 4px",
+    background: "linear-gradient(180deg, rgba(243,246,250,0), var(--ledger-mist) 34%)",
+  }
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 760 }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))", maxWidth: 760 }}>
       <div className="flex items-center gap-4 mb-8">
         <Link href="/app/cases" style={{ fontSize: 13, color: "var(--metadata-grey)" }}>← Cases</Link>
         <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>New governance case</h1>
@@ -423,7 +430,7 @@ function NewCaseInner() {
 
           {error && <ErrorBanner message={error} />}
 
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ ...stickyActionStyle, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={() => setStep(1)}
               disabled={!canProceedFromSource}
@@ -468,7 +475,7 @@ function NewCaseInner() {
               ))}
             </div>
           )}
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-6" style={stickyActionStyle}>
             <button onClick={() => setStep(0)} className="btn-secondary">Back</button>
             <button onClick={() => setStep(2)} disabled={!form.dataset_id} className="btn-primary">Continue</button>
           </div>
@@ -555,7 +562,7 @@ function NewCaseInner() {
               <textarea className="form-textarea" rows={3} value={form.historical_baseline_summary} onChange={(e) => set("historical_baseline_summary", e.target.value)} placeholder="Prior 3 months had less than 1% missingness…" />
             </div>
           </div>
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-6" style={stickyActionStyle}>
             <button onClick={() => setStep(1)} className="btn-secondary">Back</button>
             <button onClick={() => setStep(3)} disabled={!form.issue_type} className="btn-primary">Continue</button>
           </div>
@@ -580,7 +587,7 @@ function NewCaseInner() {
               <textarea className="form-textarea" rows={3} value={form.analyst_notes} onChange={(e) => set("analyst_notes", e.target.value)} placeholder="The source system migration on 2024-06-01 introduced the unit change…" />
             </div>
           </div>
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-6" style={stickyActionStyle}>
             <button onClick={() => setStep(2)} className="btn-secondary">Back</button>
             <button onClick={() => setStep(4)} className="btn-primary">Continue</button>
           </div>
@@ -609,7 +616,7 @@ function NewCaseInner() {
           <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.18)", borderRadius: 8, fontSize: 13, color: "var(--metadata-grey)", lineHeight: 1.6 }}>
             <strong style={{ color: "var(--consensus-violet)" }}>GenLayer note:</strong> Validators independently reason over the issue and may select one of these, reject all, or reach a different consensus outcome.
           </div>
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-6" style={stickyActionStyle}>
             <button onClick={() => setStep(3)} className="btn-secondary">Back</button>
             <button onClick={() => setStep(5)} className="btn-primary">Review case</button>
           </div>
@@ -669,7 +676,7 @@ function NewCaseInner() {
 
           {error && <ErrorBanner message={error} />}
 
-          <div className="flex justify-between">
+          <div className="flex justify-between" style={stickyActionStyle}>
             <button onClick={() => setStep(4)} className="btn-secondary">Back</button>
             <button onClick={handleSubmit} disabled={loading || !canSubmit} className="btn-primary">
               {loading ? "Creating case…" : "Create governance case"}
