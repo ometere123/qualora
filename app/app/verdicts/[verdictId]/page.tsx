@@ -21,7 +21,7 @@ export default async function VerdictDetailPage({ params }: { params: Promise<{ 
   const c = (v as any).governance_cases
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 860 }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))", maxWidth: 860 }}>
       <Link href="/app/verdicts" style={{ fontSize: 13, color: "var(--metadata-grey)" }}>← All Verdicts</Link>
       <div className="flex items-center justify-between mt-4 mb-6">
         <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>
