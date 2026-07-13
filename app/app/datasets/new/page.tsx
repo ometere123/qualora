@@ -67,7 +67,7 @@ export default function NewDatasetPage() {
   }
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 680 }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))", maxWidth: 680 }}>
       <div className="flex items-center gap-4 mb-8">
         <Link href="/app/datasets" style={{ fontSize: 13, color: "var(--metadata-grey)" }}>
           ← Datasets
@@ -163,7 +163,16 @@ export default function NewDatasetPage() {
           </div>
         )}
 
-        <div className="flex gap-3">
+        <div
+          className="flex gap-3"
+          style={{
+            position: "sticky",
+            bottom: "calc(92px + env(safe-area-inset-bottom))",
+            zIndex: 5,
+            padding: "14px 0 4px",
+            background: "linear-gradient(180deg, rgba(243,246,250,0), var(--ledger-mist) 34%)",
+          }}
+        >
           <Link href="/app/datasets" className="btn-secondary">Cancel</Link>
           <button type="submit" disabled={loading} className="btn-primary">
             {loading ? "Registering…" : "Register dataset"}
