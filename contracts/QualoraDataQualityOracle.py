@@ -1541,28 +1541,23 @@ class QualoraDataQualityOracle(gl.Contract):
         returned parseable JSON.
         """
 
-        def leader_fn() -> str:
-            return _analyse_case_with_verified_evidence(case_packet_json, public_evidence_urls, "LEADER")
-
-        def validator_fn(leader_result) -> bool:
-            try:
-                if isinstance(leader_result, Exception):
-                    return False
-
-                leader_payload = leader_result
-                if isinstance(leader_result, gl.vm.Return):
-                    leader_payload = leader_result.calldata
-
-                leader_decision = _normalise_consensus_json(_stringify(leader_payload))
-                validator_payload = _analyse_case_with_verified_evidence(case_packet_json, public_evidence_urls, "VALIDATOR")
-                validator_decision = _normalise_consensus_json(validator_payload)
-
-                return _substantive_match(leader_decision, validator_decision)
-            except Exception:
-                return False
-
         try:
-            result = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
+            # Use GenLayer's native EqComparative template for rich LLM output.
+            # Validators independently analyze the same verified evidence, then
+            # the network compares operative governance fields while allowing
+            # reasoning prose and advisory wording to differ.
+            result = gl.eq_principle.prompt_comparative(
+                lambda: _analyse_case_with_verified_evidence(
+                    case_packet_json, public_evidence_urls, "LEADER_OR_VALIDATOR"
+                ),
+                principle=(
+                    "The following fields must agree exactly: verdict, evidence_verified, "
+                    "verified_evidence_digests, data_contract_alignment, and downstream_risk_level. "
+                    "Severity may differ by at most one level. Evidence must be digest-verified. "
+                    "Reasoning, dataset_action, required_next_steps, fix_assessment, and other "
+                    "explanatory wording may differ when they support the same operative outcome."
+                ),
+            )
             return _json_dumps(_normalise_consensus_json(_stringify(result)))
         except Exception as exc:
             return _safe_error_decision("Automatic GenLayer consensus failed safely: " + _limit(str(exc), 420))
