@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test:qa": "node --test tests/qa-wiring.test.mjs",
+    "test:contract": "python tests/contract_security_test.py",
+    "test": "npm run test:contract && npm run test:qa",
     "test:live": "node tests/live-genlayer-e2e.mjs"
   },
   "dependencies": {

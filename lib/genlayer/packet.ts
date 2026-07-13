@@ -96,9 +96,28 @@ export function buildPacket(
 
 export function normalizePublicEvidenceUrls(publicEvidenceUrls: string[] = []): string {
   const normalized = publicEvidenceUrls.map((url) => url.trim()).filter(Boolean)
-  const invalid = normalized.find((url) => !url.startsWith("https://"))
+  const invalid = normalized.find((descriptor) => {
+    const marker = "#sha256="
+    const markerIndex = descriptor.lastIndexOf(marker)
+    if (markerIndex <= 0) return true
+    const urlText = descriptor.slice(0, markerIndex)
+    const digest = descriptor.slice(markerIndex + marker.length)
+    if (!/^[0-9a-f]{64}$/.test(digest)) return true
+    try {
+      const url = new URL(urlText)
+      if (url.protocol !== "https:" || url.username || url.password) return true
+      if (url.port && url.port !== "443") return true
+      const host = url.hostname.toLowerCase()
+      if (host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local")) return true
+      if (/^(127\.|10\.|192\.168\.|169\.254\.)/.test(host)) return true
+      const allowed = host === "raw.githubusercontent.com" || host.endsWith(".vercel.app") || host.endsWith(".supabase.co")
+      return !allowed
+    } catch {
+      return true
+    }
+  })
   if (invalid) {
-    throw new Error("Public evidence URLs must use HTTPS.")
+    throw new Error("Evidence references must use an allowed HTTPS host and end in #sha256=<64 lowercase hex characters>.")
   }
   return normalized.slice(0, 3).join("|")
 }

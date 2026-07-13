@@ -35,10 +35,15 @@ Qualora lets data teams classify missingness, duplication, schema drift, and uns
 
 ## Contract
 
-- **Address:** `0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4`
+- **Address:** `0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1`
+- **Validation:** See [SECURITY_VALIDATION.md](SECURITY_VALIDATION.md) for the live adversarial matrix and honest stack-fit assessment.
 - **Network:** GenLayer StudioNet
 - **Explorer:** https://explorer-studio.genlayer.com
 - **Key functions:** `submit_case`, `get_case_summary_card`, `get_latest_decision`, `has_case`, `get_case_status`
+
+### Verified evidence boundary
+
+Qualora v2 binds every operative governance verdict to evidence fetched independently by GenLayer validators. Evidence references use the form `https://allowed-host/path#sha256=<digest>`. Validators hash the fetched bytes, and the contract deterministically forces `needs_more_evidence` when no descriptor passes verification. Caller summaries and standalone hashes are treated as claims, not facts.
 - **Consensus:** Full validator consensus  -  `leaderOnly` is never used
 
 ---

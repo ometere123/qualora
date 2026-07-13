@@ -45,6 +45,7 @@ export interface DatasetProfile {
   profile_hash: string
   schema_snapshot_hash: string
   evidence_manifest_hash: string
+  evidence_manifest_json: string
   raw_sample_hash: string
 }
 

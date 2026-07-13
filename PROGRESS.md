@@ -32,10 +32,13 @@ Last updated: 2026-06-19
 
 ### GenLayer Contract
 - [x] `QualoraDataQualityOracle` deployed to GenLayer StudioNet
-- [x] Contract address: `0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4`
+- [x] Qualora v2.0.2 contract address: `0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1`
 - [x] `submit_case` accepts a 27-parameter data governance packet
 - [x] Full validator consensus  -  `leaderOnly` is never used
 - [x] `get_case_summary_card` + `get_latest_decision` are the canonical read surfaces
+- [x] v2 evidence descriptors bind validator-fetched bytes to SHA-256 digests
+- [x] Missing or mismatched evidence deterministically forces `needs_more_evidence`
+- [x] Validator equivalence requires the exact verdict and verified evidence foundations
 - [x] Contract rejects caller-supplied verdict fields  -  frontend cannot pre-decide outcome
 - [x] Supabase mirrors case state for UI only; GenLayer contract is the source of truth
 

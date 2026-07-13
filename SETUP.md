@@ -22,11 +22,12 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 WALLET_MASTER_SECRET=your-random-secret-min-32-chars
 
 GENLAYER_RPC_URL=https://studio.genlayer.com/api
-GENLAYER_CONTRACT_ADDRESS=0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4
-NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4
+GENLAYER_CONTRACT_ADDRESS=0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1
+NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1
 GENLAYER_CHAIN_ID=61999
 
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+QUALORA_PUBLIC_EVIDENCE_BASE_URL=https://your-production-domain.vercel.app
 ```
 
 Never commit `.env.local`.
@@ -104,12 +105,19 @@ In Supabase Dashboard → Authentication → Email Settings → SMTP:
 
 ## 7. GenLayer contract
 
-The contract is already deployed at `0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4` on StudioNet.
+The Qualora v2.0.2 contract is deployed at `0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1` on StudioNet.
 
 To redeploy:
 1. `pip install genlayer`
 2. `genlayer deploy contracts/QualoraDataQualityOracle.py --network studionet`
 3. Update `GENLAYER_CONTRACT_ADDRESS` in env vars
+
+Before deploying Qualora v2:
+
+1. Apply `supabase/migrations/0004_verified_evidence_manifests.sql`.
+2. Set `QUALORA_PUBLIC_EVIDENCE_BASE_URL` to the public HTTPS Vercel origin that serves `/api/evidence/manifests/[token]`.
+3. Re-profile existing data sources so they receive a canonical evidence manifest and public token.
+4. Deploy the v2 contract, update all three contract-address environment variables, then run the two-wallet live adversarial matrix.
 
 ---
 

@@ -4,6 +4,7 @@
 from genlayer import *
 import json
 import typing
+import hashlib
 
 
 # ---------------------------------------------------------------------------
@@ -11,8 +12,8 @@ import typing
 # ---------------------------------------------------------------------------
 
 PROTOCOL_NAME = "Qualora Data Quality Governance Oracle"
-PROTOCOL_VERSION = "1.0.0"
-CONSENSUS_SCHEMA_VERSION = "qualora.consensus"
+PROTOCOL_VERSION = "2.0.2"
+CONSENSUS_SCHEMA_VERSION = "qualora.consensus.v2"
 
 MAX_SHORT_TEXT = 280
 MAX_MEDIUM_TEXT = 1200
@@ -24,6 +25,16 @@ MAX_REASONING_CHARS = 900
 MAX_ACTION_CHARS = 420
 MAX_RECHECK_REASON_CHARS = 900
 MAX_REGISTRY_PAGE = 50
+SHA256_HEX_CHARS = 64
+
+ALLOWED_EVIDENCE_HOSTS = [
+    "raw.githubusercontent.com",
+]
+
+ALLOWED_EVIDENCE_HOST_SUFFIXES = [
+    ".vercel.app",
+    ".supabase.co",
+]
 
 STATUS_OPEN = "open"
 STATUS_FINALIZED = "finalized"
@@ -252,11 +263,81 @@ def _split_pipe(value: str, max_items: int) -> typing.List[str]:
     return parts
 
 
-def _looks_like_public_url(value: str) -> bool:
-    text = _strip(value)
-    if len(text) > MAX_PUBLIC_URL_CHARS:
+def _is_sha256_hex(value: str) -> bool:
+    text = _strip(value).lower()
+    if len(text) != SHA256_HEX_CHARS:
         return False
-    return text.startswith("https://") or text.startswith("http://")
+    for char in text:
+        if char not in "0123456789abcdef":
+            return False
+    return True
+
+
+def _parse_evidence_descriptor(value: str) -> typing.Dict[str, str]:
+    """Parse HTTPS evidence references bound to an expected SHA-256 digest."""
+    text = _strip(value)
+    marker = "#sha256="
+    if marker not in text:
+        return {}
+
+    parts = text.rsplit(marker, 1)
+    if len(parts) != 2:
+        return {}
+
+    url = _strip(parts[0])
+    digest = _strip(parts[1]).lower()
+    if len(url) > MAX_PUBLIC_URL_CHARS or not _is_sha256_hex(digest):
+        return {}
+    if not url.startswith("https://"):
+        return {}
+
+    authority_and_path = url[len("https://"):]
+    authority = authority_and_path.split("/", 1)[0].lower()
+    if authority == "" or "@" in authority:
+        return {}
+
+    host = authority
+    if ":" in authority:
+        host_parts = authority.rsplit(":", 1)
+        if len(host_parts) != 2 or host_parts[1] != "443":
+            return {}
+        host = host_parts[0]
+
+    if host == "localhost" or host.endswith(".localhost") or host.endswith(".local"):
+        return {}
+    if host.startswith("127.") or host.startswith("10.") or host.startswith("192.168."):
+        return {}
+    if host.startswith("169.254.") or host == "0.0.0.0" or host == "::1":
+        return {}
+    if host.startswith("172."):
+        octets = host.split(".")
+        if len(octets) == 4:
+            try:
+                second = int(octets[1])
+                if second >= 16 and second <= 31:
+                    return {}
+            except Exception:
+                return {}
+
+    allowed = False
+    for allowed_host in ALLOWED_EVIDENCE_HOSTS:
+        if host == allowed_host:
+            allowed = True
+    for suffix in ALLOWED_EVIDENCE_HOST_SUFFIXES:
+        if host.endswith(suffix) and host != suffix[1:]:
+            allowed = True
+    if not allowed:
+        return {}
+
+    return {"url": url, "sha256": digest, "host": host}
+
+
+def _looks_like_public_url(value: str) -> bool:
+    return len(_parse_evidence_descriptor(value)) > 0
+
+
+def _sha256_hex_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest().lower()
 
 
 def _enum(value: str, allowed: typing.List[str], fallback: str) -> str:
@@ -432,6 +513,9 @@ def _normalise_consensus_json(raw: str) -> typing.Dict[str, typing.Any]:
         "required_next_steps": _limit(_stringify(parsed.get("required_next_steps", "")), MAX_ACTION_CHARS),
         "expiry_condition": _limit(_stringify(parsed.get("expiry_condition", "")), MAX_ACTION_CHARS),
         "appeal_recommendation": _limit(_stringify(parsed.get("appeal_recommendation", "")), MAX_ACTION_CHARS),
+        "evidence_verified": bool(parsed.get("evidence_verified", False)),
+        "verified_evidence_digests": _limit(_stringify(parsed.get("verified_evidence_digests", "")), MAX_MEDIUM_TEXT),
+        "evidence_verification_summary": _limit(_stringify(parsed.get("evidence_verification_summary", "")), MAX_ACTION_CHARS),
     }
 
     if result["dataset_action"] == "":
@@ -472,39 +556,67 @@ def _normalise_consensus_json(raw: str) -> typing.Dict[str, typing.Any]:
     return result
 
 
+def _apply_evidence_policy(
+    decision: typing.Dict[str, typing.Any],
+    verified_digests: typing.List[str],
+    verification_summary: str,
+) -> typing.Dict[str, typing.Any]:
+    """Bind operative verdicts to evidence verified inside validator execution."""
+    verified = len(verified_digests) > 0
+    decision["evidence_verified"] = verified
+    decision["verified_evidence_digests"] = "|".join(verified_digests)
+    decision["evidence_verification_summary"] = _limit(verification_summary, MAX_ACTION_CHARS)
+
+    if not verified:
+        decision["verdict"] = VERDICT_MORE_EVIDENCE
+        decision["governance_class"] = GOVERNANCE_EVIDENCE
+        decision["confidence_label"] = CONFIDENCE_INSUFFICIENT
+        decision["evidence_grade"] = EVIDENCE_INSUFFICIENT
+        decision["data_contract_alignment"] = CONTRACT_UNKNOWN
+        decision["selected_outcome"] = "none"
+        decision["dataset_action"] = "No operative governance action is authorized until fetched evidence passes digest verification."
+        decision["fix_assessment"] = "The proposed fix cannot be approved or rejected without digest-verified evidence."
+        decision["required_controls"] = "Preserve the dataset, prevent irreversible remediation, and provide an allowed HTTPS evidence descriptor with a matching SHA-256 digest."
+        decision["required_next_steps"] = "Publish a canonical evidence manifest, submit its HTTPS URL and SHA-256 digest, then request a recheck."
+        decision["reasoning_summary"] = "The contract could not bind fetched evidence to the submitted digest. Caller summaries and unverified hashes cannot support an operative governance verdict."
+
+    return decision
+
+
 def _substantive_match(leader: typing.Dict[str, typing.Any], validator: typing.Dict[str, typing.Any]) -> bool:
     """
-    Consensus match based on governance_class only.
+    Consensus match on the exact operative outcome and verified foundations.
 
-    governance_class (allow / warn / block / review / evidence) is derived
-    directly from verdict and represents the operative governance action.
-    Two validators agree when they prescribe the same class of governance
-    action for the dataset, regardless of how they describe severity,
-    confidence, or downstream risk in long-form fields.
-
-    This is intentionally narrow: long-form fields (reasoning_summary,
-    dataset_action, fix_assessment) are explanatory and must not be the
-    basis of majority agreement  -  they are too volatile across independent
-    LLM calls to produce reliable consensus.
+    Long-form prose remains outside the equality gate because it varies across
+    independent models. The fields below are stable governance facts; a
+    disagreement on any of them is a disagreement about the actual outcome.
     """
-    leader_verdict = _stringify(leader.get("verdict", ""))
-    validator_verdict = _stringify(validator.get("verdict", ""))
-
-    leader_class = _verdict_to_governance_class(leader_verdict)
-    validator_class = _verdict_to_governance_class(validator_verdict)
-
-    # Primary gate: governance class must match exactly
-    if leader_class != validator_class:
+    leader_verdict = _enum(_stringify(leader.get("verdict", "")), ALLOWED_VERDICTS, VERDICT_HUMAN_REVIEW)
+    validator_verdict = _enum(_stringify(validator.get("verdict", "")), ALLOWED_VERDICTS, VERDICT_HUMAN_REVIEW)
+    if leader_verdict != validator_verdict:
         return False
 
-    # Secondary gate: fix safety must not be directly contradictory
-    # (safe vs unsafe is a hard disagreement; unknown and safe_with_controls
-    #  are treated as compatible with anything)
+    if bool(leader.get("evidence_verified", False)) != bool(validator.get("evidence_verified", False)):
+        return False
+    if _stringify(leader.get("verified_evidence_digests", "")) != _stringify(validator.get("verified_evidence_digests", "")):
+        return False
+
+    leader_evidence = _enum(_stringify(leader.get("evidence_grade", "")), ALLOWED_EVIDENCE_GRADES, EVIDENCE_INSUFFICIENT)
+    validator_evidence = _enum(_stringify(validator.get("evidence_grade", "")), ALLOWED_EVIDENCE_GRADES, EVIDENCE_INSUFFICIENT)
+    if leader_evidence != validator_evidence:
+        return False
+
+    leader_alignment = _enum(_stringify(leader.get("data_contract_alignment", "")), ALLOWED_CONTRACT_ALIGNMENT, CONTRACT_UNKNOWN)
+    validator_alignment = _enum(_stringify(validator.get("data_contract_alignment", "")), ALLOWED_CONTRACT_ALIGNMENT, CONTRACT_UNKNOWN)
+    if leader_alignment != validator_alignment:
+        return False
+
     leader_fix = _enum(_stringify(leader.get("fix_safety", "")), ALLOWED_FIX_SAFETY, FIX_UNKNOWN)
     validator_fix = _enum(_stringify(validator.get("fix_safety", "")), ALLOWED_FIX_SAFETY, FIX_UNKNOWN)
-    if leader_fix == FIX_SAFE and validator_fix == FIX_UNSAFE:
+    if leader_fix != validator_fix:
         return False
-    if leader_fix == FIX_UNSAFE and validator_fix == FIX_SAFE:
+
+    if abs(_severity_rank(_stringify(leader.get("severity", ""))) - _severity_rank(_stringify(validator.get("severity", "")))) > 1:
         return False
 
     return True
@@ -645,6 +757,12 @@ Your job is to independently decide the correct governance action based on:
 - risk to downstream consumers if the dataset remains in use,
 - risk introduced if the proposed fix is executed.
 
+Evidence boundary:
+- PUBLIC EVIDENCE CONTEXT contains only evidence whose fetched bytes matched the SHA-256 digest bound to its URL.
+- Caller summaries, analyst notes, candidate outcomes, and standalone hashes are claims, not verified facts.
+- Never approve, warn, quarantine, or reject a fix solely from caller claims.
+- When no digest-verified evidence is available, the contract will deterministically force "needs_more_evidence".
+
 Return ONLY valid JSON. No markdown. No prose before or after the JSON.
 
 Allowed enum values:
@@ -758,8 +876,92 @@ def _safe_error_decision(reason: str) -> str:
         "required_next_steps": "Review the case packet and resubmit with clearer evidence if automatic consensus is required.",
         "expiry_condition": "This fallback decision expires when a valid consensus adjudication is completed.",
         "appeal_recommendation": "Recheck is justified because automatic consensus could not safely complete.",
+        "evidence_verified": False,
+        "verified_evidence_digests": "",
+        "evidence_verification_summary": "Consensus failed before evidence could support an operative decision.",
     }
     return _json_dumps(decision)
+
+
+def _fetch_verified_evidence(public_evidence_urls: str) -> typing.Dict[str, typing.Any]:
+    descriptor_texts = _split_pipe(public_evidence_urls, MAX_PUBLIC_URLS)
+    if len(descriptor_texts) == 0:
+        return {
+            "context": "No digest-bound public evidence descriptor was supplied. Caller claims are unverified.",
+            "verified_digests": [],
+            "summary": "No evidence descriptor supplied.",
+        }
+
+    chunks: typing.List[str] = []
+    verified_digests: typing.List[str] = []
+    for idx, descriptor_text in enumerate(descriptor_texts):
+        descriptor = _parse_evidence_descriptor(descriptor_text)
+        if len(descriptor) == 0:
+            chunks.append("Evidence descriptor " + str(idx + 1) + " rejected by the deterministic source policy.")
+            continue
+
+        cleaned = descriptor.get("url", "")
+        expected_digest = descriptor.get("sha256", "")
+
+        try:
+            response = gl.nondet.web.request(cleaned, method="GET")
+            status = getattr(response, "status_code", getattr(response, "status", 200))
+            excerpt = ""
+            if status >= 200 and status < 400:
+                actual_digest = _sha256_hex_bytes(response.body)
+                if actual_digest == expected_digest:
+                    verified_digests.append(actual_digest)
+                    try:
+                        excerpt = response.body.decode("utf-8")
+                    except Exception:
+                        excerpt = "Verified binary evidence; no UTF-8 excerpt available."
+                    excerpt = _limit(excerpt, MAX_FETCHED_EVIDENCE_CHARS)
+                    chunks.append(
+                        "VERIFIED EVIDENCE " + str(idx + 1)
+                        + "\nURL: " + cleaned
+                        + "\nSHA-256: " + actual_digest
+                        + "\nExcerpt:\n" + excerpt
+                    )
+                else:
+                    chunks.append(
+                        "Evidence descriptor " + str(idx + 1)
+                        + " failed digest verification. Expected " + expected_digest
+                        + " but fetched " + actual_digest + "."
+                    )
+            else:
+                chunks.append("Evidence descriptor " + str(idx + 1) + " returned HTTP status " + str(status) + ".")
+        except Exception as exc:
+            chunks.append(
+                "Evidence descriptor " + str(idx + 1)
+                + " fetch failed: " + _limit(str(exc), 240)
+            )
+
+    summary = str(len(verified_digests)) + " of " + str(len(descriptor_texts)) + " evidence descriptors passed SHA-256 verification."
+    if len(verified_digests) != len(descriptor_texts):
+        summary = _limit(summary + " Diagnostics: " + " | ".join(chunks), 900)
+    return {
+        "context": "\n\n---\n\n".join(chunks),
+        "verified_digests": verified_digests,
+        "summary": summary,
+    }
+
+
+def _analyse_case_with_verified_evidence(
+    case_packet_json: str,
+    public_evidence_urls: str,
+    role: str,
+) -> str:
+    evidence_result = _fetch_verified_evidence(public_evidence_urls)
+    evidence_context = _stringify(evidence_result.get("context", ""))
+    prompt = _build_consensus_prompt(case_packet_json, evidence_context, role)
+    raw = gl.nondet.exec_prompt(prompt)
+    normalised = _normalise_consensus_json(raw)
+    normalised = _apply_evidence_policy(
+        normalised,
+        evidence_result.get("verified_digests", []),
+        _stringify(evidence_result.get("summary", "")),
+    )
+    return _json_dumps(normalised)
 
 
 # ---------------------------------------------------------------------------
@@ -832,6 +1034,20 @@ class QualoraDataQualityOracle(gl.Contract):
     def _require_hash_or_reference(self, evidence_hash: str, evidence_manifest_hash: str):
         if _is_blank(evidence_hash) and _is_blank(evidence_manifest_hash):
             raise gl.vmUserError("At least one evidence hash or evidence manifest hash is required.")
+
+    def _require_evidence_descriptors(self, public_evidence_urls: str, evidence_manifest_hash: str):
+        descriptors = _split_pipe(public_evidence_urls, MAX_PUBLIC_URLS)
+        if len(descriptors) == 0:
+            return
+
+        for descriptor_text in descriptors:
+            descriptor = _parse_evidence_descriptor(descriptor_text)
+            if len(descriptor) == 0:
+                raise gl.vmUserError("Evidence references must be allowed HTTPS URLs ending in #sha256=<64 lowercase hex characters>.")
+
+        first = _parse_evidence_descriptor(descriptors[0])
+        if _strip(evidence_manifest_hash).lower() != first.get("sha256", ""):
+            raise gl.vmUserError("evidence_manifest_hash must match the digest bound to the primary evidence descriptor.")
 
     def _require_no_frontend_verdict(
         self,
@@ -1179,6 +1395,7 @@ class QualoraDataQualityOracle(gl.Contract):
         self._not_paused()
         self._require_case_id(case_id)
         self._require_hash_or_reference(evidence_hash, evidence_manifest_hash)
+        self._require_evidence_descriptors(public_evidence_urls, evidence_manifest_hash)
         self._require_no_frontend_verdict(candidate_outcome_a, candidate_outcome_b, candidate_outcome_c)
         self._require_submit_quality(
             dataset_name,
@@ -1324,49 +1541,8 @@ class QualoraDataQualityOracle(gl.Contract):
         returned parseable JSON.
         """
 
-        def fetch_public_evidence_context() -> str:
-            urls = _split_pipe(public_evidence_urls, MAX_PUBLIC_URLS)
-            if len(urls) == 0:
-                return "No public evidence URLs were supplied. Use only the case packet summaries and hashes."
-
-            chunks: typing.List[str] = []
-            for idx, url in enumerate(urls):
-                cleaned = _limit(url, MAX_PUBLIC_URL_CHARS)
-                if not _looks_like_public_url(cleaned):
-                    chunks.append("Evidence URL " + str(idx + 1) + " rejected: not a valid public http(s) URL.")
-                    continue
-
-                try:
-                    response = gl.nondet.web.request(cleaned, method="GET")
-                    status = response.status_code
-                    body = ""
-                    if status >= 200 and status < 400:
-                        body = response.body.decode("utf-8")
-                        body = _limit(body, MAX_FETCHED_EVIDENCE_CHARS)
-                    else:
-                        body = "HTTP status " + str(status) + " returned by evidence URL."
-                    chunks.append(
-                        "Evidence URL " + str(idx + 1) + ": " + cleaned
-                        + "\nStatus: " + str(status)
-                        + "\nExcerpt:\n" + body
-                    )
-                except Exception as exc:
-                    chunks.append(
-                        "Evidence URL " + str(idx + 1) + ": " + cleaned
-                        + "\nFetch failed: " + _limit(str(exc), 240)
-                    )
-
-            return "\n\n---\n\n".join(chunks)
-
-        def run_analysis(role: str) -> str:
-            evidence_context = fetch_public_evidence_context()
-            prompt = _build_consensus_prompt(case_packet_json, evidence_context, role)
-            raw = gl.nondet.exec_prompt(prompt)
-            normalised = _normalise_consensus_json(raw)
-            return _json_dumps(normalised)
-
         def leader_fn() -> str:
-            return run_analysis("LEADER")
+            return _analyse_case_with_verified_evidence(case_packet_json, public_evidence_urls, "LEADER")
 
         def validator_fn(leader_result) -> bool:
             try:
@@ -1378,7 +1554,7 @@ class QualoraDataQualityOracle(gl.Contract):
                     leader_payload = leader_result.calldata
 
                 leader_decision = _normalise_consensus_json(_stringify(leader_payload))
-                validator_payload = run_analysis("VALIDATOR")
+                validator_payload = _analyse_case_with_verified_evidence(case_packet_json, public_evidence_urls, "VALIDATOR")
                 validator_decision = _normalise_consensus_json(validator_payload)
 
                 return _substantive_match(leader_decision, validator_decision)
@@ -1603,6 +1779,9 @@ class QualoraDataQualityOracle(gl.Contract):
             "severity": _stringify(consensus.get("severity", "")),
             "confidence_label": _stringify(consensus.get("confidence_label", "")),
             "evidence_grade": _stringify(consensus.get("evidence_grade", "")),
+            "evidence_verified": bool(consensus.get("evidence_verified", False)),
+            "verified_evidence_digests": _stringify(consensus.get("verified_evidence_digests", "")),
+            "evidence_verification_summary": _stringify(consensus.get("evidence_verification_summary", "")),
             "fix_safety": _stringify(consensus.get("fix_safety", "")),
             "downstream_risk_level": _stringify(consensus.get("downstream_risk_level", "")),
             "dataset_action": _stringify(consensus.get("dataset_action", "")),

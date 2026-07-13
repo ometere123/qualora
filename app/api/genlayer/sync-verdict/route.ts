@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       downstream_risk: verdictData.downstreamRisk,
       consensus_status: "finalized",
       consensus_timestamp: verdictData.consensusTimestamp,
-    }, { onConflict: "governance_case_id" })
+    }, { onConflict: "contract_address,governance_case_id" })
 
     await admin.from("governance_cases").update({ status: "verdict_received" }).eq("id", caseId)
     await admin.from("contract_activity_logs").update({ status: "finalized" }).eq("transaction_hash", txHash)

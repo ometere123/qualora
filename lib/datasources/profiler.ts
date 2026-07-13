@@ -111,7 +111,39 @@ export function profileDataset(
   const profileSrc = JSON.stringify({ row_count, column_count, missingness, duplicate_row_pct })
   const profile_hash = sha256(profileSrc)
 
-  const evidence_manifest_hash = sha256(schema_snapshot_hash + raw_sample_hash + profile_hash)
+  const evidence_manifest_json = JSON.stringify({
+    schema: "qualora.evidence.v1",
+    row_count,
+    column_count,
+    missingness,
+    duplication: { duplicate_row_pct, duplicate_row_count: dupRows, duplicate_key_cols },
+    schema_drift,
+    freshness: {
+      last_updated: opts.last_updated ?? null,
+      expected_cadence: opts.expected_cadence ?? null,
+      hours_stale,
+    },
+    validity,
+    volume: {
+      row_count_delta_pct,
+      expected_min: opts.expected_min ?? null,
+      expected_max: opts.expected_max ?? null,
+    },
+    integrity: {
+      raw_sample_sha256: raw_sample_hash,
+      schema_snapshot_sha256: schema_snapshot_hash,
+      profile_sha256: profile_hash,
+    },
+    columns: columns.map((column) => ({
+      name: column.name,
+      type: column.type,
+      nullable: column.nullable,
+      null_count: column.null_count,
+      null_pct: column.null_pct,
+      unique_count: column.unique_count ?? null,
+    })),
+  })
+  const evidence_manifest_hash = sha256(evidence_manifest_json)
 
   return {
     row_count,
@@ -135,6 +167,7 @@ export function profileDataset(
     schema_snapshot_hash,
     raw_sample_hash,
     evidence_manifest_hash,
+    evidence_manifest_json,
   }
 }
 
@@ -170,5 +203,6 @@ function emptyProfile(): DatasetProfile {
     schema_snapshot_hash: "",
     raw_sample_hash: "",
     evidence_manifest_hash: "",
+    evidence_manifest_json: "",
   }
 }

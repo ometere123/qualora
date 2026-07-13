@@ -96,14 +96,16 @@ export async function POST(request: Request) {
       profile_hash: result.profile.profile_hash,
       schema_snapshot_hash: result.profile.schema_snapshot_hash,
       evidence_manifest_hash: result.profile.evidence_manifest_hash,
+      evidence_manifest_json: result.profile.evidence_manifest_json,
       raw_sample_hash: result.profile.raw_sample_hash,
-    }).select("id").single()
+    }).select("id,evidence_public_token").single()
     if (profErr) throw profErr
 
     return NextResponse.json({
       ok: true,
       data_source_id: ds.id,
       profile_id: profile_row.id,
+      evidence_public_token: profile_row.evidence_public_token,
       source_label: result.source_label,
       profile: result.profile,
     })

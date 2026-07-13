@@ -4,7 +4,7 @@ import { join, relative } from "node:path"
 import { test } from "node:test"
 
 const ROOT = process.cwd()
-const NEW_ADDRESS = "0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4"
+const NEW_ADDRESS = "0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1"
 const OLD_ADDRESS = ["0x0f56ef8082ACefb", "146F69951538217bf9e6a8418"].join("")
 
 function read(path) {
@@ -77,11 +77,43 @@ test("GenLayer payload is hash and summary based, never full dataset content", (
   assert.match(packet, /schemaSnapshotHash/)
   assert.match(packet, /evidenceManifestHash/)
   assert.match(submit, /profileRow\.raw_sample_hash/)
-  assert.match(submit, /Missing required profile hashes/)
+  assert.match(submit, /predates verified evidence manifests/)
   assert.doesNotMatch(submit, /csvText|rawCsv|rawJson|fileBody|uploaded file body/i)
   assert.doesNotMatch(packet, /rows\.slice|raw CSV|raw JSON|file body/i)
   assert.match(packet, /assertCandidateOutcomesSafe/)
-  assert.match(packet, /Public evidence URLs must use HTTPS/)
+  assert.match(packet, /#sha256=/)
+  assert.match(packet, /allowed HTTPS host/)
+  assert.match(submit, /canonicalEvidenceDescriptor/)
+  assert.match(submit, /evidence_public_token/)
+  assert.match(submit, /QUALORA_PUBLIC_EVIDENCE_BASE_URL/)
+})
+
+test("verified evidence manifests are canonical, public, and deployment-scoped", () => {
+  const profiler = read("lib/datasources/profiler.ts")
+  const endpoint = read("app/api/evidence/manifests/[token]/route.ts")
+  const migration = read("supabase/migrations/0004_verified_evidence_manifests.sql")
+  const submit = read("app/api/genlayer/submit-case/route.ts")
+  const sync = read("app/api/genlayer/sync-verdict/route.ts")
+
+  assert.match(profiler, /evidence_manifest_json = JSON\.stringify/)
+  assert.match(profiler, /evidence_manifest_hash = sha256\(evidence_manifest_json\)/)
+  assert.match(endpoint, /evidence_public_token/)
+  assert.match(endpoint, /Cache-Control.*immutable/)
+  assert.match(migration, /evidence_manifest_json text/)
+  assert.match(migration, /evidence_public_token uuid not null default gen_random_uuid\(\)/)
+  assert.match(migration, /contract_address, governance_case_id/)
+  assert.match(submit, /\.eq\("contract_address", contractAddress\)/)
+  assert.match(sync, /onConflict: "contract_address,governance_case_id"/)
+})
+
+test("contract binds fetched bytes to SHA-256 and fails closed without verified evidence", () => {
+  const source = read("contracts/QualoraDataQualityOracle.py")
+  assert.match(source, /hashlib\.sha256\(value\)\.hexdigest\(\)/)
+  assert.match(source, /actual_digest == expected_digest/)
+  assert.match(source, /def _apply_evidence_policy/)
+  assert.match(source, /decision\["verdict"\] = VERDICT_MORE_EVIDENCE/)
+  assert.match(source, /leader_verdict != validator_verdict/)
+  assert.doesNotMatch(source, /leader_class != validator_class/)
 })
 
 test("request_recheck is restricted to the original case submitter", () => {
@@ -112,6 +144,13 @@ test("readback routes use genlayer-js readContract surfaces", () => {
     assert.match(source, /get_case_summary_card/)
     assert.doesNotMatch(source, /provider\.call|eth_call/)
   }
+})
+
+test("production evidence smoke route is immutable and fact-bearing", () => {
+  const source = read("app/api/evidence/smoke/route.ts")
+  assert.match(source, /qualora\.evidence-smoke\.v1/)
+  assert.match(source, /blank_customer_email_rows: 4/)
+  assert.match(source, /immutable, no-transform/)
 })
 
 test("debug route returns readback, receipt, and decoded payload details", () => {

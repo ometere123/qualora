@@ -18,6 +18,20 @@ const FAILED_RESULT_NAMES = new Set([
   "MAJORITY_DISAGREE",
 ])
 
+function publicEvidenceBaseUrl() {
+  const explicit = process.env.QUALORA_PUBLIC_EVIDENCE_BASE_URL ?? process.env.NEXT_PUBLIC_APP_URL
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL
+  const value = explicit && explicit.startsWith("https://")
+    ? explicit
+    : vercel
+      ? `https://${vercel}`
+      : ""
+  if (!value.startsWith("https://")) {
+    throw new Error("A public HTTPS evidence base URL is required. Configure QUALORA_PUBLIC_EVIDENCE_BASE_URL.")
+  }
+  return value.replace(/\/$/, "")
+}
+
 function isSuccessfulExecution(receipt: Record<string, unknown>) {
   const resultName = String(
     receipt.txExecutionResultName ??
@@ -65,7 +79,7 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     caseId = body.caseId
-    const publicEvidenceUrls = Array.isArray(body.publicEvidenceUrls) ? body.publicEvidenceUrls : []
+    const supplementalEvidenceUrls = Array.isArray(body.publicEvidenceUrls) ? body.publicEvidenceUrls : []
     if (!caseId) return NextResponse.json({ error: "caseId is required" }, { status: 400 })
 
     const masterSecret = process.env.WALLET_MASTER_SECRET
@@ -82,13 +96,17 @@ export async function POST(request: Request) {
 
     const { data: profileRow } = await admin
       .from("dataset_profiles")
-      .select("raw_sample_hash,schema_snapshot_hash,evidence_manifest_hash,profile_hash")
+      .select("raw_sample_hash,schema_snapshot_hash,evidence_manifest_hash,profile_hash,evidence_manifest_json,evidence_public_token")
       .eq("id", profileId)
       .single()
 
-    if (!profileRow?.raw_sample_hash || !profileRow.schema_snapshot_hash || !profileRow.evidence_manifest_hash) {
-      return NextResponse.json({ error: "Missing required profile hashes for GenLayer submission." }, { status: 400 })
+    if (!profileRow?.raw_sample_hash || !profileRow.schema_snapshot_hash || !profileRow.evidence_manifest_hash || !profileRow.evidence_manifest_json || !profileRow.evidence_public_token) {
+      return NextResponse.json({ error: "This profile predates verified evidence manifests. Re-profile the data source before GenLayer submission." }, { status: 400 })
     }
+
+    const canonicalEvidenceDescriptor =
+      `${publicEvidenceBaseUrl()}/api/evidence/manifests/${profileRow.evidence_public_token}`
+      + `#sha256=${profileRow.evidence_manifest_hash}`
 
     const { data: evidenceFiles } = await admin
       .from("evidence_files").select("evidence_hash").eq("governance_case_id", caseId)
@@ -102,7 +120,7 @@ export async function POST(request: Request) {
           .map((e) => e.evidence_hash ?? "")
           .filter(Boolean),
       ],
-      publicEvidenceUrls,
+      [canonicalEvidenceDescriptor, ...supplementalEvidenceUrls],
       {
         sampleRowsHash: profileRow.raw_sample_hash,
         schemaSnapshotHash: profileRow.schema_snapshot_hash,
@@ -257,6 +275,7 @@ export async function POST(request: Request) {
       .from("genlayer_governance_verdicts")
       .select("id")
       .eq("governance_case_id", caseId)
+      .eq("contract_address", contractAddress)
       .maybeSingle()
     if (existingVerdictError) throw existingVerdictError
 
