@@ -109,7 +109,10 @@ export async function POST(request: Request) {
       + `#sha256=${profileRow.evidence_manifest_hash}`
 
     const { data: evidenceFiles } = await admin
-      .from("evidence_files").select("evidence_hash,file_url").eq("governance_case_id", caseId)
+      .from("evidence_files").select("evidence_hash,file_url")
+      .eq("governance_case_id", caseId)
+      .order("created_at", { ascending: false })
+      .limit(1)
 
     const uploadedEvidenceDescriptors = ((evidenceFiles ?? []) as Array<{ evidence_hash?: string | null; file_url?: string | null }>)
       .filter((e) => Boolean(e.file_url && e.evidence_hash))
