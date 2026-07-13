@@ -4,7 +4,7 @@ import { join, relative } from "node:path"
 import { test } from "node:test"
 
 const ROOT = process.cwd()
-const NEW_ADDRESS = "0x708f46749b7faC69768A6E4c18B559415dFEB98e"
+const NEW_ADDRESS = "0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4"
 const OLD_ADDRESS = ["0x0f56ef8082ACefb", "146F69951538217bf9e6a8418"].join("")
 
 function read(path) {
@@ -82,6 +82,24 @@ test("GenLayer payload is hash and summary based, never full dataset content", (
   assert.doesNotMatch(packet, /rows\.slice|raw CSV|raw JSON|file body/i)
   assert.match(packet, /assertCandidateOutcomesSafe/)
   assert.match(packet, /Public evidence URLs must use HTTPS/)
+})
+
+test("request_recheck is restricted to the original case submitter", () => {
+  const source = read("contracts/QualoraDataQualityOracle.py")
+  assert.match(source, /def _require_case_submitter\(self, case_id: str\):/)
+  assert.match(source, /gl\.message\.sender_address != submitter/)
+
+  const recheckStart = source.indexOf("def request_recheck(")
+  const coreStart = source.indexOf("def _submit_case_internal(", recheckStart)
+  const recheck = source.slice(recheckStart, coreStart)
+  assert.match(recheck, /if case_id not in self\.case_exists:/)
+  assert.match(recheck, /self\._require_case_submitter\(case_id\)/)
+  assert.ok(
+    recheck.indexOf("self._require_case_submitter(case_id)") < recheck.indexOf("self._submit_case_internal("),
+    "authorization must run before re-adjudication can replace the latest decision"
+  )
+
+  assert.match(source, /if not exists:\s+self\.case_submitters\[case_id\] = gl\.message\.sender_address/)
 })
 
 test("readback routes use genlayer-js readContract surfaces", () => {

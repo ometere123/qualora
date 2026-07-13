@@ -22,8 +22,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 WALLET_MASTER_SECRET=your-random-secret-min-32-chars
 
 GENLAYER_RPC_URL=https://studio.genlayer.com/api
-GENLAYER_CONTRACT_ADDRESS=0x708f46749b7faC69768A6E4c18B559415dFEB98e
-NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0x708f46749b7faC69768A6E4c18B559415dFEB98e
+GENLAYER_CONTRACT_ADDRESS=0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4
+NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4
 GENLAYER_CHAIN_ID=61999
 
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -104,7 +104,7 @@ In Supabase Dashboard → Authentication → Email Settings → SMTP:
 
 ## 7. GenLayer contract
 
-The contract is already deployed at `0x708f46749b7faC69768A6E4c18B559415dFEB98e` on StudioNet.
+The contract is already deployed at `0xeD01AaAAe3C03c793caA0f124fd19261fA24B5E4` on StudioNet.
 
 To redeploy:
 1. `pip install genlayer`

@@ -823,6 +823,12 @@ class QualoraDataQualityOracle(gl.Contract):
         if len(_strip(case_id)) > 96:
             raise gl.vmUserError("case_id is too long.")
 
+    def _require_case_submitter(self, case_id: str):
+        """Restrict decision-replacing actions to the case's original party."""
+        submitter = self.case_submitters[case_id]
+        if gl.message.sender_address != submitter:
+            raise gl.vmUserError("Only the original case submitter can request a recheck.")
+
     def _require_hash_or_reference(self, evidence_hash: str, evidence_manifest_hash: str):
         if _is_blank(evidence_hash) and _is_blank(evidence_manifest_hash):
             raise gl.vmUserError("At least one evidence hash or evidence manifest hash is required.")
@@ -1092,6 +1098,8 @@ class QualoraDataQualityOracle(gl.Contract):
         if case_id not in self.case_exists:
             raise gl.vmUserError("Case not found.")
 
+        self._require_case_submitter(case_id)
+
         if _is_blank(recheck_reason):
             raise gl.vmUserError("recheck_reason is required.")
 
@@ -1261,7 +1269,8 @@ class QualoraDataQualityOracle(gl.Contract):
 
         self.case_exists[case_id] = True
         self.case_versions[case_id] = next_version
-        self.case_submitters[case_id] = gl.message.sender_address
+        if not exists:
+            self.case_submitters[case_id] = gl.message.sender_address
         self.case_status[case_id] = STATUS_FINALIZED
         self.case_latest_decision_key[case_id] = decision_key
         self.case_records[case_id] = case_json
