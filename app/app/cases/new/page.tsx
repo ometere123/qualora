@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { Upload, Database, Globe, Link2, Snowflake, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Upload, Database, Globe, Link2, Snowflake, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react"
 
 const STEPS = [
   "Data Source",
@@ -695,6 +695,8 @@ function ConnectorForm({
   profile: ProfileSummary | null
   sourceLabel: string
 }) {
+  const [visibleSecrets, setVisibleSecrets] = useState<Record<string, boolean>>({})
+
   return (
     <div className="flex flex-col gap-4 mt-2">
       {fields.map(({ key, label, placeholder, secret, textarea }) => (
@@ -702,8 +704,36 @@ function ConnectorForm({
           <label className="form-label">{label}</label>
           {textarea ? (
             <textarea className="form-textarea" rows={4} value={values[key] ?? ""} onChange={(e) => onChange(key, e.target.value)} placeholder={placeholder} />
+          ) : secret ? (
+            <div style={{ position: "relative" }}>
+              <input
+                type={visibleSecrets[key] ? "text" : "password"}
+                className="form-input"
+                value={values[key] ?? ""}
+                onChange={(e) => onChange(key, e.target.value)}
+                placeholder={placeholder}
+                style={{ paddingRight: 44 }}
+              />
+              <button
+                type="button"
+                aria-label={visibleSecrets[key] ? `Hide ${label}` : `Show ${label}`}
+                onClick={() => setVisibleSecrets((prev) => ({ ...prev, [key]: !prev[key] }))}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "var(--metadata-grey)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {visibleSecrets[key] ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           ) : (
-            <input type={secret ? "password" : "text"} className="form-input" value={values[key] ?? ""} onChange={(e) => onChange(key, e.target.value)} placeholder={placeholder} />
+            <input type="text" className="form-input" value={values[key] ?? ""} onChange={(e) => onChange(key, e.target.value)} placeholder={placeholder} />
           )}
         </div>
       ))}
