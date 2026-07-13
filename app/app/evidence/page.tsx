@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
+import EvidenceUploader from "./EvidenceUploader"
 
 export const metadata = { title: "Evidence Files" }
 
-export default async function EvidencePage() {
+export default async function EvidencePage({ searchParams }: { searchParams: Promise<{ caseId?: string }> }) {
+  const { caseId } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -14,10 +16,12 @@ export default async function EvidencePage() {
     .order("created_at", { ascending: false })
 
   return (
-    <div style={{ padding: "28px 32px" }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))" }}>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-page-title" style={{ color: "var(--control-ink)" }}>Evidence Files</h1>
       </div>
+
+      <EvidenceUploader caseId={caseId} />
 
       {!files?.length && (
         <div className="audit-panel" style={{ padding: 40, textAlign: "center" }}>
