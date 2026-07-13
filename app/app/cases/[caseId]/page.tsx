@@ -32,7 +32,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
   const evidence = (c as any).evidence_files ?? []
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 900 }}>
+    <div style={{ padding: "28px 32px calc(140px + env(safe-area-inset-bottom))", maxWidth: 900 }}>
       {/* Breadcrumb */}
       <div className="flex items-center gap-3 mb-6">
         <Link href="/app/cases" style={{ fontSize: 13, color: "var(--metadata-grey)" }}>← Cases</Link>
