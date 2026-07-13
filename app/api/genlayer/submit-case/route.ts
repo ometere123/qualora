@@ -109,7 +109,11 @@ export async function POST(request: Request) {
       + `#sha256=${profileRow.evidence_manifest_hash}`
 
     const { data: evidenceFiles } = await admin
-      .from("evidence_files").select("evidence_hash").eq("governance_case_id", caseId)
+      .from("evidence_files").select("evidence_hash,file_url").eq("governance_case_id", caseId)
+
+    const uploadedEvidenceDescriptors = ((evidenceFiles ?? []) as Array<{ evidence_hash?: string | null; file_url?: string | null }>)
+      .filter((e) => Boolean(e.file_url && e.evidence_hash))
+      .map((e) => `${e.file_url}#sha256=${e.evidence_hash}`)
 
     const packet = buildPacket(
       caseRow as Record<string, string | null>,
@@ -120,7 +124,7 @@ export async function POST(request: Request) {
           .map((e) => e.evidence_hash ?? "")
           .filter(Boolean),
       ],
-      [canonicalEvidenceDescriptor, ...supplementalEvidenceUrls],
+      [canonicalEvidenceDescriptor, ...uploadedEvidenceDescriptors, ...supplementalEvidenceUrls],
       {
         sampleRowsHash: profileRow.raw_sample_hash,
         schemaSnapshotHash: profileRow.schema_snapshot_hash,
