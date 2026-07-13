@@ -66,7 +66,12 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
               <SubmitToGenLayerButton caseId={caseId} caseData={c} />
             </>
           ) : (verdict || c.status === "verdict_received" || c.status === "pending_consensus" || c.status === "submitted_to_genlayer") ? (
-            <Link href={`/app/consensus/${caseId}`} className="btn-genlayer">View Consensus Chamber</Link>
+            <>
+              <Link href={`/app/consensus/${caseId}`} className="btn-secondary">View Consensus Chamber</Link>
+              {verdict && evidence.length > 0 && c.status === "verdict_received" && (
+                <SubmitToGenLayerButton caseId={caseId} caseData={c} label="Request recheck" />
+              )}
+            </>
           ) : (
             <SubmitToGenLayerButton caseId={caseId} caseData={c} />
           )}

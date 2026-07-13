@@ -162,8 +162,8 @@ export async function POST(request: Request) {
 
     // Full validator consensus: do not pass leaderOnly here.
     if (caseAlreadyExists) {
-      // Resubmit after needs_more_evidence  -  call request_recheck (21 args, drops immutable fields)
-      const recheckReason = "Additional evidence attached after needs_more_evidence verdict."
+      // Replace the latest decision with a new evidence-backed version.
+      const recheckReason = "Authorized case-party recheck submitted with updated evidence and remediation details."
       txHash = await glClient.writeContract({
         address: contractAddress as `0x${string}`,
         functionName: "request_recheck",

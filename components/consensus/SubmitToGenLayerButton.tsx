@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation"
 interface Props {
   caseId: string
   caseData: Record<string, unknown>
+  label?: string
 }
 
-export default function SubmitToGenLayerButton({ caseId, caseData }: Props) {
+export default function SubmitToGenLayerButton({ caseId, caseData, label = "Submit to GenLayer" }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -65,7 +66,7 @@ export default function SubmitToGenLayerButton({ caseId, caseData }: Props) {
   return (
     <>
       <button onClick={() => setOpen(true)} className="btn-genlayer">
-        Submit to GenLayer
+        {label}
       </button>
 
       {open && (
@@ -152,7 +153,7 @@ export default function SubmitToGenLayerButton({ caseId, caseData }: Props) {
                     Cancel
                   </button>
                   <button onClick={handleSubmit} disabled={loading} className="btn-genlayer" style={{ flex: 2 }}>
-                    {loading ? "Submitting to StudioNet…" : "Submit to GenLayer"}
+                    {loading ? "Submitting to StudioNet…" : label}
                   </button>
                 </div>
               </div>
