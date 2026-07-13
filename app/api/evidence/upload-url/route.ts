@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     const storagePath = `${user.id}/${caseId}/${Date.now()}-${file.name}`
     const admin = createAdminClient()
     const { error: storageErr } = await admin.storage
-      .from("evidence-files")
+      .from("evidence")
       .upload(storagePath, buffer, { contentType: file.type, upsert: false })
 
     if (storageErr) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     // Get public URL for the uploaded file
     const { data: { publicUrl: fileUrl } } = admin.storage
-      .from("evidence-files")
+      .from("evidence")
       .getPublicUrl(storagePath)
 
     // Record in database  -  column names must match the evidence_files schema exactly
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       governance_case_id: caseId,
       file_path: storagePath,
       file_url: fileUrl,
-      file_bucket: "evidence-files",
+      file_bucket: "evidence",
       file_type: file.type,
       file_size: buffer.byteLength,
       evidence_hash: evidenceHash,
