@@ -10,6 +10,7 @@ export default function EvidenceUploader({ caseId }: { caseId?: string }) {
   const [message, setMessage] = useState("")
 
   if (!caseId) return null
+  const targetCaseId = caseId
 
   async function upload() {
     if (!file) return
@@ -17,7 +18,7 @@ export default function EvidenceUploader({ caseId }: { caseId?: string }) {
     setMessage("")
     const form = new FormData()
     form.append("file", file)
-    form.append("caseId", caseId)
+    form.append("caseId", targetCaseId)
     try {
       const response = await fetch("/api/evidence/upload-url", { method: "POST", body: form })
       const body = await response.json()
