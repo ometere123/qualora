@@ -79,6 +79,7 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     caseId = body.caseId
+    const rollbackPlan = typeof body.rollbackPlan === "string" ? body.rollbackPlan.trim() : ""
     const supplementalEvidenceUrls = Array.isArray(body.publicEvidenceUrls) ? body.publicEvidenceUrls : []
     if (!caseId) return NextResponse.json({ error: "caseId is required" }, { status: 400 })
 
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
       .map((e) => `${e.file_url}#sha256=${e.evidence_hash}`)
 
     const packet = buildPacket(
-      caseRow as Record<string, string | null>,
+      { ...(caseRow as Record<string, string | null>), rollback_plan: rollbackPlan || (caseRow as Record<string, string | null>).rollback_plan || "" },
       (caseRow as { datasets?: Record<string, string | null> }).datasets ?? {},
       [
         profileRow.evidence_manifest_hash,

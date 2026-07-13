@@ -16,6 +16,7 @@ export default function SubmitToGenLayerButton({ caseId, caseData, label = "Subm
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
   const [polling, setPolling] = useState(false)
+  const [rollbackPlan, setRollbackPlan] = useState("")
 
   async function handleSubmit() {
     setError(null)
@@ -24,7 +25,7 @@ export default function SubmitToGenLayerButton({ caseId, caseData, label = "Subm
     const res = await fetch("/api/genlayer/submit-case", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ caseId }),
+      body: JSON.stringify({ caseId, rollbackPlan }),
     })
 
     const body = await res.json()
@@ -128,6 +129,19 @@ export default function SubmitToGenLayerButton({ caseId, caseData, label = "Subm
                 <p style={{ fontSize: 14, color: "var(--metadata-grey)", lineHeight: 1.7 }}>
                   Your embedded wallet will sign this governance case and submit it to the GenLayer Intelligent Contract for validator consensus.
                 </p>
+
+                <div>
+                  <label style={{ display: "block", fontSize: 12, color: "var(--control-ink)", fontWeight: 600, marginBottom: 6 }}>
+                    Rollback plan (required for a safe remediation assessment)
+                  </label>
+                  <textarea
+                    value={rollbackPlan}
+                    onChange={(event) => setRollbackPlan(event.target.value)}
+                    rows={4}
+                    placeholder="Snapshot the quarantined version, record its hash, deploy the cleaned version behind a release flag, validate it, and restore the snapshot if any check fails."
+                    style={{ width: "100%", border: "1px solid var(--schema-line)", borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "var(--control-ink)", resize: "vertical" }}
+                  />
+                </div>
 
                 <div
                   style={{
