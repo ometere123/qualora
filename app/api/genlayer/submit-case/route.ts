@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       .from("evidence_files").select("evidence_hash,file_url")
       .eq("governance_case_id", caseId)
       .order("created_at", { ascending: false })
-      .limit(1)
+      .limit(2)
 
     const uploadedEvidenceDescriptors = ((evidenceFiles ?? []) as Array<{ evidence_hash?: string | null; file_url?: string | null }>)
       .filter((e) => Boolean(e.file_url && e.evidence_hash))
