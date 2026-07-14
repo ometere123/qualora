@@ -40,7 +40,7 @@ Evidence:
 
 ## Final Contract
 
-- Contract address: `0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1`
+- Contract address: `0xCbd9D33A44407C047c9eeF1c1d72a48D74d513aB`
 - Network: GenLayer StudioNet
 - Chain ID: `61999`
 - Protocol: `2.0.2`

@@ -25,7 +25,7 @@ The important idea is simple: Qualora does not ask validators to trust a user's 
 Live production:
 
 - App: `https://qualoraa.vercel.app`
-- Contract: `0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1`
+- Contract: `0xCbd9D33A44407C047c9eeF1c1d72a48D74d513aB`
 - Network: GenLayer StudioNet, chain `61999`
 - Protocol: `2.0.2`
 - Consensus schema: `qualora.consensus.v2`
@@ -93,6 +93,7 @@ Security-critical behavior:
 - Caller-provided verdict fields are not trusted as outcomes.
 - Missing, unavailable, or mismatched evidence fails closed as `needs_more_evidence`.
 - Full validator consensus is used; `leaderOnly` is not used for governance decisions.
+- Rich governance outputs use GenLayer's native comparative equivalence principle: operative fields must agree while explanatory prose may vary.
 
 ## Verified Evidence
 
@@ -242,9 +243,9 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 WALLET_MASTER_SECRET=your-random-secret-min-32-chars
 
 GENLAYER_RPC_URL=https://studio.genlayer.com/api
-GENLAYER_CONTRACT_ADDRESS=0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1
-NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1
-NEXT_PUBLIC_QUALORA_CONTRACT_ADDRESS=0xa45FD2E0A4a4858279872454fa592Aee1FAB87e1
+GENLAYER_CONTRACT_ADDRESS=0xCbd9D33A44407C047c9eeF1c1d72a48D74d513aB
+NEXT_PUBLIC_GENLAYER_CONTRACT_ADDRESS=0xCbd9D33A44407C047c9eeF1c1d72a48D74d513aB
+NEXT_PUBLIC_QUALORA_CONTRACT_ADDRESS=0xCbd9D33A44407C047c9eeF1c1d72a48D74d513aB
 GENLAYER_CHAIN_ID=61999
 
 NEXT_PUBLIC_APP_URL=http://localhost:3000
